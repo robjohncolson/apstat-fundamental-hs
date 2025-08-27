@@ -30,6 +30,7 @@ library
       Persistence
       Profile
       Questions
+      Reputation
       Simulation
   other-modules:
       Paths_apstat_fundamental_hs
@@ -76,6 +77,7 @@ test-suite apstat-fundamental-hs-test
       PersistenceSpec
       ProfileSpec
       QuestionsSpec
+      ReputationSpec
       Paths_apstat_fundamental_hs
   hs-source-dirs:
       test
