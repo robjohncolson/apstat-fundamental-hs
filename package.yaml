@@ -1,0 +1,71 @@
+# Package configuration for apstat-fundamental-hs
+# Hpack configuration file that generates the .cabal file
+
+name:                apstat-fundamental-hs
+version:             0.1.0.0
+github:              "username/apstat-fundamental-hs"
+license:             BSD3
+author:              "Author name here"
+maintainer:          "example@example.com"
+copyright:           "2024 Author name here"
+
+extra-source-files:
+- README.md
+- CHANGELOG.md
+
+# Metadata used when publishing your package
+synopsis:            AP Statistics Fundamental Concepts - Haskell Implementation
+category:            Education
+
+# To avoid duplicated efforts in documentation and dealing with the
+# complications of embedding Haddock markup inside cabal files, it is
+# common to point users to the README.md file.
+description:         Please see the README on GitHub at <https://github.com/username/apstat-fundamental-hs#readme>
+
+dependencies:
+- base >= 4.7 && < 5
+- aeson >= 2.0        # JSON parsing and encoding
+- bytestring >= 0.10  # ByteString operations
+- text >= 1.2         # Text operations
+- containers >= 0.6   # Data structures (Map, Set, etc.)
+- time >= 1.9         # Time and date operations
+- mtl >= 2.2          # Monad transformers
+- random >= 1.2       # Random number generation
+
+ghc-options:
+- -Wall
+- -Wcompat
+- -Widentities
+- -Wincomplete-record-updates
+- -Wincomplete-uni-patterns
+- -Wmissing-export-lists
+- -Wmissing-home-modules
+- -Wpartial-fields
+- -Wredundant-constraints
+
+library:
+  source-dirs: src
+
+executables:
+  apstat-fundamental-hs-exe:
+    main:                Main.hs
+    source-dirs:         app
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - apstat-fundamental-hs
+
+tests:
+  apstat-fundamental-hs-test:
+    main:                Spec.hs
+    source-dirs:         test
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - apstat-fundamental-hs
+    - hspec >= 2.7
+    - QuickCheck >= 2.14
