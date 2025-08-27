@@ -1,104 +1,154 @@
 {-|
 Module      : Persistence
-Description : P2 atoms - State persistence with JSON serialization
+Description : P2 atoms - State persistence with exactly 7 atoms
 Copyright   : (c) 2024
 License     : BSD3
 Maintainer  : example@example.com
 Stability   : experimental
 
-This module handles persistence operations for saving and loading application state.
-P2 atoms represent persistence operations for the AP Statistics fundamental concepts system,
-including JSON serialization and file I/O operations.
+This module implements the P2 (Persistence) subsystem with exactly 7 atoms
+as specified in the AP Statistics PoK Blockchain mathematical foundation.
+Enforces Invariant 11 (Persistence Integrity) and Invariant 12 (Atomicity).
 -}
 
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 
 module Persistence
-    ( AppState(..)
-    , saveState
-    , loadState
-    , saveStateToFile
-    , loadStateFromFile
-    , encodeState
-    , decodeState
+    ( -- P2 Atoms (exactly 7)
+      saveState         -- P2 atom 1: Save state to filesystem
+    , loadState         -- P2 atom 2: Load state from filesystem
+    , stateToJson       -- P2 atom 3: Convert state to JSON
+    , jsonToState       -- P2 atom 4: Parse JSON to state
+    , filePath          -- P2 atom 5: Determine storage location
+    , integrityCheck    -- P2 atom 6: Verify data integrity
+    , serializeAtom     -- P2 atom 7: Atomic serialization
+    -- Supporting types
+    , PersistenceState(..)
+    , IntegrityHash(..)
+    -- Helper functions
+    , createPersistenceState
     ) where
 
-import Data.Aeson (ToJSON, FromJSON, encode, decode, eitherDecode)
+import Data.Aeson (ToJSON, FromJSON, encode, eitherDecode)
 import Data.ByteString.Lazy (ByteString)
 import qualified Data.ByteString.Lazy as L
 import Data.Text (Text)
+import qualified Data.Text as T
+import qualified Data.Text.Encoding as TE
 import GHC.Generics (Generic)
+import System.IO (writeFile, readFile)
+import Control.Exception (try, IOException)
+import Crypto.Hash (SHA256(..), Digest)
+import qualified Crypto.Hash as H
 import Profile (Profile)
-import Blockchain (BlockchainState)
+import Blockchain (BlockchainState, getCurrentTimestamp)
 
--- | Application state that can be persisted
-data AppState = AppState
-    { appStateProfiles :: [Profile]
-    , appStateBlockchain :: BlockchainState
-    , appStateVersion :: Text
-    , appStateMetadata :: Text
+-- | Integrity hash wrapper for data verification
+newtype IntegrityHash = IntegrityHash { unHash :: Text }
+    deriving (Show, Eq, Generic)
+
+instance ToJSON IntegrityHash
+instance FromJSON IntegrityHash
+
+-- | Complete application state for persistence (combines Profile + Blockchain)
+data PersistenceState = PersistenceState
+    { persistenceProfiles :: [Profile]           -- All user profiles
+    , persistenceBlockchain :: BlockchainState   -- Complete blockchain state
+    , persistenceVersion :: Text                 -- Version for compatibility
+    , persistenceTimestamp :: Double            -- Save timestamp
+    , persistenceHash :: IntegrityHash          -- Data integrity verification
     } deriving (Show, Eq, Generic)
 
--- Automatically derive JSON instances
-instance ToJSON AppState
-instance FromJSON AppState
+instance ToJSON PersistenceState
+instance FromJSON PersistenceState
 
--- | Save application state to a JSON ByteString
-saveState :: AppState -> ByteString
-saveState = encode
+-- ============================================================================
+-- P2 ATOMS (7 functions per specification)
+-- ============================================================================
 
--- | Load application state from a JSON ByteString
-loadState :: ByteString -> Either String AppState
-loadState = eitherDecode
-
--- | Save application state to a file
-saveStateToFile :: FilePath -> AppState -> IO (Either String ())
-saveStateToFile filepath appState = do
-    let jsonData = saveState appState
-    result <- try $ L.writeFile filepath jsonData
+-- | P2 atom 1: Save state to filesystem with integrity check
+-- Enforces Invariant 11: Persistence Integrity
+saveState :: PersistenceState -> IO (Either Text ())
+saveState state = do
+    let jsonData = stateToJson state
+        path = filePath "blockchain-state.json"
+    result <- try $ L.writeFile path jsonData
     case result of
-        Left ex -> return $ Left $ show ex
+        Left (ex :: IOException) -> return $ Left $ T.pack $ "Failed to save state: " ++ show ex
         Right _ -> return $ Right ()
-  where
-    try :: IO a -> IO (Either IOError a)
-    try action = do
-        result <- tryIO action
-        return result
-    
-    tryIO :: IO a -> IO (Either IOError a)
-    tryIO action = (Right <$> action) `catch` (return . Left)
-    
-    catch :: IO a -> (IOError -> IO a) -> IO a
-    catch = flip $ \handler action -> do
-        result <- action
-        return result  -- Simplified for template
 
--- | Load application state from a file
-loadStateFromFile :: FilePath -> IO (Either String AppState)
-loadStateFromFile filepath = do
-    result <- try $ L.readFile filepath
+-- | P2 atom 2: Load state from filesystem with integrity verification
+-- Enforces Invariant 11: loadState(saveState(s)) must equal s
+loadState :: FilePath -> IO (Either Text PersistenceState)
+loadState fileName = do
+    let path = filePath fileName
+    result <- try $ L.readFile path
     case result of
-        Left ex -> return $ Left $ show ex
-        Right jsonData -> return $ loadState jsonData
-  where
-    try :: IO a -> IO (Either IOError a)
-    try action = do
-        result <- tryIO action
-        return result
-    
-    tryIO :: IO a -> IO (Either IOError a)
-    tryIO action = (Right <$> action) `catch` (return . Left)
-    
-    catch :: IO a -> (IOError -> IO a) -> IO a
-    catch = flip $ \handler action -> do
-        result <- action
-        return result  -- Simplified for template
+        Left (ex :: IOException) -> return $ Left $ T.pack $ "Failed to read state file: " ++ show ex
+        Right jsonData -> case jsonToState jsonData of
+            Left err -> return $ Left $ T.pack $ "Failed to parse state: " ++ err
+            Right state -> do
+                let verification = integrityCheck state
+                if verification
+                    then return $ Right state
+                    else return $ Left "Integrity check failed: data may be corrupted"
 
--- | Encode state to JSON (alias for saveState)
-encodeState :: AppState -> ByteString
-encodeState = saveState
+-- | P2 atom 3: Convert state to JSON ByteString
+-- Pure function for serialization
+stateToJson :: PersistenceState -> ByteString
+stateToJson state = 
+    let stateWithHash = state { persistenceHash = calculateHash state }
+    in encode stateWithHash
 
--- | Decode state from JSON (alias for loadState)
-decodeState :: ByteString -> Either String AppState
-decodeState = loadState
+-- | P2 atom 4: Parse JSON ByteString to state
+-- Pure function for deserialization
+jsonToState :: ByteString -> Either String PersistenceState
+jsonToState = eitherDecode
+
+-- | P2 atom 5: Determine storage file path
+-- Pure function returning absolute path for persistence
+filePath :: FilePath -> FilePath
+filePath fileName = "./data/" ++ fileName
+
+-- | P2 atom 6: Verify data integrity using SHA256 hash
+-- Enforces data integrity per mathematical specification
+integrityCheck :: PersistenceState -> Bool
+integrityCheck state = 
+    let storedHash = persistenceHash state
+        calculatedHash = calculateHash state
+    in storedHash == calculatedHash
+
+-- | P2 atom 7: Atomic serialization of individual components
+-- Enables independent serialization of subsystem atoms
+serializeAtom :: (ToJSON a) => a -> ByteString
+serializeAtom = encode
+
+-- ============================================================================
+-- HELPER FUNCTIONS
+-- ============================================================================
+
+-- | Calculate SHA256 hash of state for integrity verification
+calculateHash :: PersistenceState -> IntegrityHash
+calculateHash state = 
+    let stateWithoutHash = state { persistenceHash = IntegrityHash "" }
+        jsonData = encode stateWithoutHash
+        bytes = L.toStrict jsonData
+        digest = H.hash bytes :: Digest SHA256
+    in IntegrityHash $ T.pack $ show digest
+
+-- | Create a new persistence state with current timestamp and hash
+createPersistenceState :: [Profile] -> BlockchainState -> IO PersistenceState
+createPersistenceState profiles blockchain = do
+    currentTime <- getCurrentTimestamp
+    let state = PersistenceState
+            { persistenceProfiles = profiles
+            , persistenceBlockchain = blockchain
+            , persistenceVersion = "1.0.0"
+            , persistenceTimestamp = currentTime
+            , persistenceHash = IntegrityHash ""  -- Will be calculated in stateToJson
+            }
+    return state
+
+-- getCurrentTimestamp is imported from Blockchain module

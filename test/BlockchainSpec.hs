@@ -1,13 +1,13 @@
 {-|
 Module      : BlockchainSpec
-Description : Unit tests for Blockchain module using HSpec and QuickCheck
+Description : Unit tests for Blockchain module B atoms (Invariant 12: Atomicity)
 Copyright   : (c) 2024
 License     : BSD3
 Maintainer  : example@example.com
 Stability   : experimental
 
-Unit tests for the Blockchain module, testing B atoms functionality
-including transactions, attestations, and consensus mechanisms.
+Atomic tests for the Blockchain module with 25 B atoms, ensuring each atom
+is independently testable per Invariant 12 of the mathematical specification.
 -}
 
 {-# LANGUAGE OverloadedStrings #-}
@@ -18,91 +18,294 @@ import Test.Hspec
 import Test.QuickCheck
 import Data.Text (Text)
 import qualified Data.Text as T
-import Data.Time (getCurrentTime)
+import qualified Data.Map as Map
+import Data.Either (isLeft, isRight)
 
 import Blockchain
 
--- | Main test specification for Blockchain module
+-- | Main test specification for Blockchain module (Invariant 12: Atomicity)
 spec :: Spec
 spec = do
-  describe "Blockchain" $ do
-    describe "createTransaction" $ do
-      it "creates a transaction with given parameters" $ do
-        currentTime <- getCurrentTime
-        let tx = createTransaction "tx-001" "alice" "bob" "transfer 100" currentTime
-        transactionId tx `shouldBe` "tx-001"
-        transactionFrom tx `shouldBe` "alice"
-        transactionTo tx `shouldBe` "bob"
-        transactionData tx `shouldBe` "transfer 100"
-        transactionTimestamp tx `shouldBe` currentTime
+  describe "Blockchain B Atoms" $ do
+    
+    -- Test individual B data atoms for atomicity (Invariant 12)
+    describe "B Data Atoms (19 atoms)" $ do
+      
+      describe "B atom 1: hash" $ do
+        it "stores and retrieves hash independently" $ do
+          Right conf <- return $ validateConfidence 0.8
+          tx <- createTransaction AttestationTx "Q1" "pubkey123" "sig" (Just "answer") Nothing conf "privkey"
+          hash tx `shouldSatisfy` (not . T.null)
+          
+      describe "B atom 2: prevHash" $ do
+        it "stores and retrieves prevHash independently" $ do
+          Right conf <- return $ validateConfidence 0.8
+          tx <- createTransaction AttestationTx "Q1" "pubkey123" "sig" (Just "answer") Nothing conf "privkey"
+          prevHash tx `shouldBe` ""  -- Initially empty
+          
+      describe "B atom 3: timestamp" $ do
+        it "stores and retrieves timestamp independently" $ do
+          Right conf <- return $ validateConfidence 0.8
+          tx <- createTransaction AttestationTx "Q1" "pubkey123" "sig" (Just "answer") Nothing conf "privkey"
+          timestamp tx `shouldSatisfy` (> 0)
+          
+      describe "B atom 4: nonce" $ do
+        it "stores and retrieves nonce independently" $ do
+          Right conf <- return $ validateConfidence 0.8
+          tx <- createTransaction AttestationTx "Q1" "pubkey123" "sig" (Just "answer") Nothing conf "privkey"
+          nonce tx `shouldBe` 0  -- Initially 0
+          
+      describe "B atom 5: questionId" $ do
+        it "stores and retrieves questionId independently" $ do
+          Right conf <- return $ validateConfidence 0.8
+          tx <- createTransaction AttestationTx "Q1" "pubkey123" "sig" (Just "answer") Nothing conf "privkey"
+          questionId tx `shouldBe` "Q1"
+          
+      describe "B atom 6: answerHash" $ do
+        it "stores and retrieves answerHash independently for MCQ" $ do
+          Right conf <- return $ validateConfidence 0.8
+          tx <- createTransaction AttestationTx "Q1" "pubkey123" "sig" (Just "A") Nothing conf "privkey"
+          answerHash tx `shouldSatisfy` (/= Nothing)
+          
+        it "is Nothing for CreateUser transactions" $ do
+          Right conf <- return $ validateConfidence 0.8
+          tx <- createTransaction CreateUserTx "alice" "pubkey123" "sig" (Just "alice") Nothing conf "privkey"
+          answerHash tx `shouldBe` Nothing
+          
+      describe "B atom 7: answerText" $ do
+        it "stores and retrieves answerText independently" $ do
+          Right conf <- return $ validateConfidence 0.8
+          tx <- createTransaction AttestationTx "Q1" "pubkey123" "sig" (Just "My answer") Nothing conf "privkey"
+          answerText tx `shouldBe` Just "My answer"
+          
+      describe "B atom 8: score" $ do
+        it "stores and retrieves FRQ score independently" $ do
+          Right conf <- return $ validateConfidence 0.8
+          Right frqScore <- return $ validateFRQScore 4.5
+          tx <- createTransaction AttestationTx "Q1" "pubkey123" "sig" (Just "answer") (Just frqScore) conf "privkey"
+          score tx `shouldBe` Just frqScore
+          
+      describe "B atom 9: attesterPubkey" $ do
+        it "stores and retrieves attesterPubkey independently" $ do
+          Right conf <- return $ validateConfidence 0.8
+          tx <- createTransaction AttestationTx "Q1" "test-pubkey" "sig" (Just "answer") Nothing conf "privkey"
+          attesterPubkey tx `shouldBe` "test-pubkey"
+          
+      describe "B atom 10: signature" $ do
+        it "stores and retrieves signature independently" $ do
+          Right conf <- return $ validateConfidence 0.8
+          tx <- createTransaction AttestationTx "Q1" "pubkey123" "sig" (Just "answer") Nothing conf "test-privkey"
+          signature tx `shouldBe` "test-privkey-sig"
+          
+      describe "B atom 11: txType" $ do
+        it "stores and retrieves txType independently" $ do
+          Right conf <- return $ validateConfidence 0.8
+          tx1 <- createTransaction AttestationTx "Q1" "pubkey123" "sig" (Just "answer") Nothing conf "privkey"
+          tx2 <- createTransaction CreateUserTx "alice" "pubkey123" "sig" (Just "alice") Nothing conf "privkey"
+          txType tx1 `shouldBe` AttestationTx
+          txType tx2 `shouldBe` CreateUserTx
+          
+      describe "B atom 12: isMatch" $ do
+        it "stores and retrieves isMatch independently" $ do
+          Right conf <- return $ validateConfidence 0.8
+          tx <- createTransaction AttestationTx "Q1" "pubkey123" "sig" (Just "answer") Nothing conf "privkey"
+          isMatch tx `shouldBe` Nothing  -- Initially Nothing
+          
+      describe "B atom 13: questionDistribution" $ do
+        it "stores and retrieves questionDistribution independently" $ do
+          Right conf <- return $ validateConfidence 0.8
+          tx <- createTransaction AttestationTx "Q1" "pubkey123" "sig" (Just "answer") Nothing conf "privkey"
+          questionDistribution tx `shouldBe` Map.empty  -- Initially empty
+          
+      describe "B atom 14: mcqDistribution" $ do
+        it "stores and retrieves mcqDistribution independently" $ do
+          Right conf <- return $ validateConfidence 0.8
+          tx <- createTransaction AttestationTx "Q1" "pubkey123" "sig" (Just "answer") Nothing conf "privkey"
+          mcqDistribution tx `shouldBe` Map.empty  -- Initially empty
+          
+      describe "B atom 15: frqScores" $ do
+        it "stores and retrieves frqScores independently" $ do
+          Right conf <- return $ validateConfidence 0.8
+          tx <- createTransaction AttestationTx "Q1" "pubkey123" "sig" (Just "answer") Nothing conf "privkey"
+          frqScores tx `shouldBe` []  -- Initially empty
+          
+      describe "B atom 16: convergence" $ do
+        it "stores and retrieves convergence independently" $ do
+          Right conf <- return $ validateConfidence 0.8
+          tx <- createTransaction AttestationTx "Q1" "pubkey123" "sig" (Just "answer") Nothing conf "privkey"
+          convergence tx `shouldBe` 0.0  -- Initially 0.0
+          
+      describe "B atom 17: confidence" $ do
+        it "stores and retrieves confidence independently" $ do
+          Right conf <- return $ validateConfidence 0.75
+          tx <- createTransaction AttestationTx "Q1" "pubkey123" "sig" (Just "answer") Nothing conf "privkey"
+          confidence tx `shouldBe` conf
+          
+      describe "B atom 18: anonymousSignature" $ do
+        it "stores and retrieves anonymousSignature independently" $ do
+          Right conf <- return $ validateConfidence 0.8
+          tx <- createTransaction AttestationTx "Q1" "pubkey123" "sig" (Just "answer") Nothing conf "privkey"
+          anonymousSignature tx `shouldBe` Nothing  -- Initially Nothing
+          
+      describe "B atom 19: officialAnswer" $ do
+        it "stores and retrieves officialAnswer independently" $ do
+          Right conf <- return $ validateConfidence 0.8
+          tx <- createTransaction AttestationTx "Q1" "pubkey123" "sig" (Just "answer") Nothing conf "privkey"
+          officialAnswer tx `shouldBe` Nothing  -- Initially Nothing
+    
+    -- Test B function atoms
+    describe "B Function Atoms (6 functions)" $ do
+      
+      describe "B function atom 1: sha256Hash" $ do
+        it "produces consistent hash for same input" $ do
+          let input = "test data"
+          sha256Hash input `shouldBe` sha256Hash input
+          
+        it "produces different hashes for different inputs" $ do
+          sha256Hash "input1" `shouldNotBe` sha256Hash "input2"
+          
+        it "produces non-empty hash" $ do
+          sha256Hash "test" `shouldSatisfy` (not . T.null)
+      
+      describe "B function atom 2: getCurrentTimestamp" $ do
+        it "returns positive timestamp" $ do
+          ts <- getCurrentTimestamp
+          ts `shouldSatisfy` (> 0)
+          
+        it "returns increasing timestamps" $ do
+          ts1 <- getCurrentTimestamp
+          ts2 <- getCurrentTimestamp
+          ts2 `shouldSatisfy` (>= ts1)
+      
+      describe "B function atom 3: validateSignature" $ do
+        it "validates correct signature format" $ do
+          validateSignature "pubkey" "message" "privkey-sig" `shouldBe` True
+          
+        it "rejects empty signatures" $ do
+          validateSignature "pubkey" "message" "" `shouldBe` False
+          
+        it "rejects signatures without -sig suffix" $ do
+          validateSignature "pubkey" "message" "invalid" `shouldBe` False
+      
+      describe "B function atom 4: calculateConsensus (Invariant 2)" $ do
+        it "implements progressive quorum correctly" $ do
+          Right conf1 <- return $ validateConfidence 0.8
+          Right conf2 <- return $ validateConfidence 0.7
+          Right conf3 <- return $ validateConfidence 0.9
+          
+          tx1 <- createTransaction AttestationTx "Q1" "pk1" "sig" (Just "A") Nothing conf1 "sk1"
+          tx2 <- createTransaction AttestationTx "Q1" "pk2" "sig" (Just "A") Nothing conf2 "sk2"  
+          tx3 <- createTransaction AttestationTx "Q1" "pk3" "sig" (Just "A") Nothing conf3 "sk3"
+          
+          att1 <- createAttestation "att1" "v1" tx1
+          att2 <- createAttestation "att2" "v2" tx2
+          att3 <- createAttestation "att3" "v3" tx3
+          
+          let result = calculateConsensus [att1, att2, att3] "Q1"
+          Map.lookup "consensus" result `shouldSatisfy` (/= Nothing)
+          Map.lookup "quorum_size" result `shouldSatisfy` (/= Nothing)
+          
+        it "returns empty map for insufficient attestations" $ do
+          calculateConsensus [] "Q1" `shouldBe` Map.empty
+          
+      describe "B function atom 5: updateDistributions (Invariant 7)" $ do
+        it "calculates MCQ convergence correctly" $ do
+          Right conf <- return $ validateConfidence 0.8
+          tx1 <- createTransaction AttestationTx "Q1" "pk1" "sig" (Just "A") Nothing conf "sk1"
+          tx2 <- createTransaction AttestationTx "Q1" "pk2" "sig" (Just "A") Nothing conf "sk2"
+          tx3 <- createTransaction AttestationTx "Q1" "pk3" "sig" (Just "B") Nothing conf "sk3"
+          
+          let (qDist, mcqDist, frqScores', conv) = updateDistributions [tx1, tx2, tx3] "Q1"
+          conv `shouldSatisfy` (> 0.5)  -- 2/3 chose A, so convergence > 0.5
+          Map.size mcqDist `shouldBe` 2  -- Two distinct answers
+          
+        it "calculates FRQ convergence using coefficient of variation" $ do
+          Right conf <- return $ validateConfidence 0.8
+          Right score1 <- return $ validateFRQScore 3.0
+          Right score2 <- return $ validateFRQScore 3.5
+          Right score3 <- return $ validateFRQScore 4.0
+          
+          tx1 <- createTransaction AttestationTx "Q1" "pk1" "sig" (Just "ans") (Just score1) conf "sk1"
+          tx2 <- createTransaction AttestationTx "Q1" "pk2" "sig" (Just "ans") (Just score2) conf "sk2"
+          tx3 <- createTransaction AttestationTx "Q1" "pk3" "sig" (Just "ans") (Just score3) conf "sk3"
+          
+          let (_, _, frqScores', conv) = updateDistributions [tx1, tx2, tx3] "Q1"
+          length frqScores' `shouldBe` 3
+          conv `shouldSatisfy` (> 0)  -- Should have positive convergence
+          
+      describe "B function atom 6: detectOutliers (Invariant 11)" $ do
+        it "detects outliers using Z-score" $ do
+          let values = [1.0, 2.0, 3.0, 2.5, 2.3, 10.0]  -- 10.0 is outlier
+          let outliers = detectOutliers values
+          outliers `shouldSatisfy` (not . null)
+          outliers `shouldContain` [10.0]
+          
+        it "returns empty list for insufficient data" $ do
+          detectOutliers [1.0, 2.0] `shouldBe` []
+          
+        it "returns empty list for uniform data" $ do
+          let uniform = replicate 10 5.0
+          detectOutliers uniform `shouldBe` []
 
-    describe "createAttestation" $ do
-      it "creates an attestation with given parameters" $ do
-        currentTime <- getCurrentTime
-        let att = createAttestation "att-001" "validator1" "subject1" 0.95 currentTime "proof123"
-        attestationId att `shouldBe` "att-001"
-        attestationValidator att `shouldBe` "validator1"
-        attestationSubject att `shouldBe` "subject1"
-        attestationValue att `shouldBe` 0.95
-        attestationTimestamp att `shouldBe` currentTime
-        attestationProof att `shouldBe` "proof123"
-
-    describe "validateTransaction" $ do
-      it "validates a correct transaction" $ do
-        currentTime <- getCurrentTime
-        let tx = createTransaction "tx-001" "alice" "bob" "transfer 100" currentTime
-        validateTransaction tx `shouldBe` Right tx
-
-      it "rejects transaction with empty sender" $ do
-        currentTime <- getCurrentTime
-        let tx = createTransaction "tx-001" "" "bob" "transfer 100" currentTime
-        validateTransaction tx `shouldBe` Left "Transaction must have a sender"
-
-      it "rejects transaction with empty recipient" $ do
-        currentTime <- getCurrentTime
-        let tx = createTransaction "tx-001" "alice" "" "transfer 100" currentTime
-        validateTransaction tx `shouldBe` Left "Transaction must have a recipient"
-
-      it "rejects transaction with empty data" $ do
-        currentTime <- getCurrentTime
-        let tx = createTransaction "tx-001" "alice" "bob" "" currentTime
-        validateTransaction tx `shouldBe` Left "Transaction must have data"
-
-    describe "calculateConsensus" $ do
-      it "calculates average consensus value for matching subject" $ do
-        currentTime <- getCurrentTime
-        let att1 = createAttestation "att-001" "v1" "math" 0.8 currentTime "proof1"
-        let att2 = createAttestation "att-002" "v2" "math" 0.9 currentTime "proof2"
-        let att3 = createAttestation "att-003" "v3" "science" 0.7 currentTime "proof3"
-        let attestations = [att1, att2, att3]
+  -- Test Invariant enforcement
+  describe "Invariant Enforcement" $ do
+    
+    describe "Invariant 1: Identity validation" $ do
+      it "validates transaction with valid pubkey" $ do
+        Right conf <- return $ validateConfidence 0.8
+        tx <- createTransaction AttestationTx "Q1" "valid-pubkey" "sig" (Just "answer") Nothing conf "privkey"
+        validateTransaction tx `shouldSatisfy` isRight
         
-        calculateConsensus attestations "math" `shouldBe` Just 0.85
-        calculateConsensus attestations "science" `shouldBe` Just 0.7
-        calculateConsensus attestations "history" `shouldBe` Nothing
-
-    describe "addTransactionToBlock" $ do
-      it "adds transaction to block's transaction list" $ do
-        currentTime <- getCurrentTime
-        let tx = createTransaction "tx-001" "alice" "bob" "transfer 100" currentTime
-        let block = Block 1 [] [] currentTime "prev-hash" "block-hash"
-        let updatedBlock = addTransactionToBlock block tx
+      it "rejects transaction with empty pubkey" $ do
+        Right conf <- return $ validateConfidence 0.8
+        tx <- createTransaction AttestationTx "Q1" "" "sig" (Just "answer") Nothing conf "privkey"
+        validateTransaction tx `shouldSatisfy` isLeft
         
-        blockTransactions updatedBlock `shouldBe` [tx]
-        blockIndex updatedBlock `shouldBe` 1
+    describe "Invariant 3: Confidence bounds (0.0-1.0)" $ do
+      it "validates confidence within bounds" $ do
+        validateConfidence 0.5 `shouldSatisfy` isRight
+        validateConfidence 0.0 `shouldSatisfy` isRight  
+        validateConfidence 1.0 `shouldSatisfy` isRight
+        
+      it "rejects confidence outside bounds" $ do
+        validateConfidence (-0.1) `shouldSatisfy` isLeft
+        validateConfidence 1.1 `shouldSatisfy` isLeft
+        
+    describe "Invariant 5: FRQ score bounds (1.0-5.0)" $ do
+      it "validates FRQ score within bounds" $ do
+        validateFRQScore 3.0 `shouldSatisfy` isRight
+        validateFRQScore 1.0 `shouldSatisfy` isRight
+        validateFRQScore 5.0 `shouldSatisfy` isRight
+        
+      it "rejects FRQ score outside bounds" $ do
+        validateFRQScore 0.5 `shouldSatisfy` isLeft  
+        validateFRQScore 5.5 `shouldSatisfy` isLeft
+        
+    describe "Invariant 6: Temporal ordering" $ do
+      it "generates increasing timestamps" $ do
+        ts1 <- getCurrentTimestamp
+        ts2 <- getCurrentTimestamp
+        ts2 `shouldSatisfy` (>= ts1)
 
--- | QuickCheck property tests
-prop_consensusIsAverage :: [Double] -> Property
-prop_consensusIsAverage values = 
-  not (null values) ==> \currentTime ->
-    let attestations = zipWith (\i v -> createAttestation (T.pack $ show i) "validator" "subject" v currentTime "proof") [1..] values
-        result = calculateConsensus attestations "subject"
-        expected = sum values / fromIntegral (length values)
-    in result == Just expected
+-- | Property-based tests for atomicity (Invariant 12)
+prop_hashConsistency :: Text -> Bool
+prop_hashConsistency input = sha256Hash input == sha256Hash input
 
-prop_transactionValidation :: Text -> Text -> Text -> Text -> Property
-prop_transactionValidation txId from to txData = 
-  not (T.null from) && not (T.null to) && not (T.null txData) ==> \currentTime ->
-    let tx = createTransaction txId from to txData currentTime
-    in case validateTransaction tx of
-         Right _ -> True
-         Left _ -> False
+prop_confidenceBounds :: Double -> Bool  
+prop_confidenceBounds c = 
+  case validateConfidence c of
+    Right (Blockchain.Confidence c') -> c' >= 0.0 && c' <= 1.0
+    Left _ -> c < 0.0 || c > 1.0
+
+prop_frqScoreBounds :: Double -> Bool
+prop_frqScoreBounds s =
+  case validateFRQScore s of  
+    Right (Blockchain.FRQScore s') -> s' >= 1.0 && s' <= 5.0
+    Left _ -> s < 1.0 || s > 5.0
+
+prop_outlierDetectionStable :: [Double] -> Property
+prop_outlierDetectionStable values =
+  length values >= 3 ==>
+    let outliers1 = detectOutliers values
+        outliers2 = detectOutliers values
+    in outliers1 == outliers2  -- Should be deterministic

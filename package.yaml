@@ -31,6 +31,7 @@ dependencies:
 - time >= 1.9         # Time and date operations
 - mtl >= 2.2          # Monad transformers
 - random >= 1.2       # Random number generation
+- cryptonite >= 0.30  # Cryptographic operations (SHA256)
 
 ghc-options:
 - -Wall
@@ -69,3 +70,4 @@ tests:
     - apstat-fundamental-hs
     - hspec >= 2.7
     - QuickCheck >= 2.14
+    - temporary >= 1.3
