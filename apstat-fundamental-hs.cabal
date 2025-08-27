@@ -29,6 +29,7 @@ library
       Blockchain
       Persistence
       Profile
+      Questions
       Simulation
   other-modules:
       Paths_apstat_fundamental_hs
@@ -74,6 +75,7 @@ test-suite apstat-fundamental-hs-test
       BlockchainSpec
       PersistenceSpec
       ProfileSpec
+      QuestionsSpec
       Paths_apstat_fundamental_hs
   hs-source-dirs:
       test
