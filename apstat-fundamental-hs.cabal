@@ -32,6 +32,7 @@ library
       Questions
       Reputation
       Simulation
+      UI
   other-modules:
       Paths_apstat_fundamental_hs
   hs-source-dirs:
@@ -78,6 +79,7 @@ test-suite apstat-fundamental-hs-test
       ProfileSpec
       QuestionsSpec
       ReputationSpec
+      UISpec
       Paths_apstat_fundamental_hs
   hs-source-dirs:
       test
