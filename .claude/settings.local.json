@@ -5,7 +5,8 @@
       "Bash(stack:*)",
       "Bash(tree:*)",
       "Bash(./integration_test)",
-      "Bash(mv:*)"
+      "Bash(mv:*)",
+      "Bash(git log:*)"
     ],
     "deny": [],
     "ask": []
