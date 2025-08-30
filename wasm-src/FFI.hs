@@ -44,6 +44,25 @@ module FFI
     -- Random operations
     , js_random
     , randomWASM
+    -- DOM operations
+    , js_getElementById
+    , js_setInnerHTML
+    , js_addEventListener
+    , js_getValue
+    , js_setValue
+    , js_createElement
+    , js_appendChild
+    , js_removeClass
+    , js_addClass
+    , getElementByIdWASM
+    , setInnerHTMLWASM
+    , addEventListenerWASM
+    , getValueWASM
+    , setValueWASM
+    , createElementWASM
+    , appendChildWASM
+    , removeClassWASM
+    , addClassWASM
     ) where
 
 import Data.Text (Text)
@@ -163,3 +182,77 @@ foreign import javascript unsafe "Math.random()"
 
 randomWASM :: IO Double
 randomWASM = js_random
+
+-- ============================================================================
+-- DOM OPERATIONS FFI (for UI integration)
+-- ============================================================================
+
+-- DOM element access
+foreign import javascript unsafe "document.getElementById($1)"
+  js_getElementById :: JSString -> IO JSVal
+
+foreign import javascript unsafe "$1.innerHTML = $2"
+  js_setInnerHTML :: JSVal -> JSString -> IO ()
+
+foreign import javascript unsafe "$1.addEventListener($2, $3)"
+  js_addEventListener :: JSVal -> JSString -> JSVal -> IO ()
+
+foreign import javascript unsafe "$1.value"
+  js_getValue :: JSVal -> IO JSString
+
+foreign import javascript unsafe "$1.value = $2"
+  js_setValue :: JSVal -> JSString -> IO ()
+
+-- DOM manipulation
+foreign import javascript unsafe "document.createElement($1)"
+  js_createElement :: JSString -> IO JSVal
+
+foreign import javascript unsafe "$1.appendChild($2)"
+  js_appendChild :: JSVal -> JSVal -> IO ()
+
+foreign import javascript unsafe "$1.classList.remove($2)"
+  js_removeClass :: JSVal -> JSString -> IO ()
+
+foreign import javascript unsafe "$1.classList.add($2)"
+  js_addClass :: JSVal -> JSString -> IO ()
+
+-- WASM wrapper functions for DOM operations
+getElementByIdWASM :: Text -> IO (Maybe JSVal)
+getElementByIdWASM elementId = do
+    result <- js_getElementById (toJSString elementId)
+    if result == nullRef
+        then return Nothing
+        else return $ Just result
+
+setInnerHTMLWASM :: JSVal -> Text -> IO ()
+setInnerHTMLWASM element content = 
+    js_setInnerHTML element (toJSString content)
+
+addEventListenerWASM :: JSVal -> Text -> JSVal -> IO ()
+addEventListenerWASM element eventType callback =
+    js_addEventListener element (toJSString eventType) callback
+
+getValueWASM :: JSVal -> IO Text
+getValueWASM element = do
+    result <- js_getValue element
+    return $ T.pack $ JS.unpack result
+
+setValueWASM :: JSVal -> Text -> IO ()
+setValueWASM element value =
+    js_setValue element (toJSString value)
+
+createElementWASM :: Text -> IO JSVal
+createElementWASM tagName = 
+    js_createElement (toJSString tagName)
+
+appendChildWASM :: JSVal -> JSVal -> IO ()
+appendChildWASM parent child = 
+    js_appendChild parent child
+
+removeClassWASM :: JSVal -> Text -> IO ()
+removeClassWASM element className =
+    js_removeClass element (toJSString className)
+
+addClassWASM :: JSVal -> Text -> IO ()
+addClassWASM element className =
+    js_addClass element (toJSString className)

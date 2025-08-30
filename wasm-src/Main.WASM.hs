@@ -17,6 +17,7 @@ key functions for JavaScript integration, maintaining all 58 atoms.
 module Main where
 
 import Blockchain.WASM
+import UI.WASM (initSystemStateWASM, handleEventWASM, renderStateWASM, processEventQueueWASM, getSystemStateWASM, setSystemStateWASM)
 import FFI
 import Data.Text (Text)
 import qualified Data.Text as T
@@ -32,10 +33,43 @@ main = do
     logWASM "AP Statistics PoK Blockchain - WASM Module Loaded"
     logWASM "All 58 atoms available via JavaScript exports"
     
+    -- Initialize UI subsystem
+    logWASM "Initializing UI subsystem with reactor model..."
+    initialStateJson <- initSystemStateWASM
+    logWASM "UI system state initialized successfully"
+    
+    -- Set up persistence
+    setupPersistence
+    
     -- Run basic initialization tests
     testBasicFunctions
     
-    logWASM "WASM module initialization complete"
+    -- Start reactor event loop
+    startReactorLoop
+    
+    logWASM "WASM module initialization complete - ready for Phase 3 testing"
+
+-- Set up auto-save and recovery
+setupPersistence :: IO ()
+setupPersistence = do
+    logWASM "Configuring state persistence..."
+    
+    -- Try to recover previous state
+    maybeState <- readStateWASM "apstat-system-state"
+    case maybeState of
+        Nothing -> logWASM "No previous state found, using initial state"
+        Just stateJson -> do
+            logWASM "Recovering previous state..."
+            result <- setSystemStateWASM (toJSString stateJson)
+            logWASM $ "State recovery result: " <> T.pack (JS.unpack result)
+    
+    logWASM "Persistence layer configured"
+
+-- Reactor model event loop
+startReactorLoop :: IO ()
+startReactorLoop = do
+    logWASM "Reactor loop active - ready for DOM events"
+    logWASM "Event loop established, awaiting browser interactions"
 
 -- | Test basic atom functionality
 testBasicFunctions :: IO ()
@@ -114,6 +148,61 @@ getSystemStatusJS :: IO JSVal = do
     let status = "WASM module active at " <> T.pack (show timestamp)
     logWASM status
     toJSVal status
+
+-- ============================================================================
+-- UI INTEGRATION EXPORTS FOR PHASE 3
+-- ============================================================================
+
+-- Handle navigation events from JavaScript
+foreign export javascript "navigate" navigateWASM :: JSString -> IO JSString
+
+navigateWASM :: JSString -> IO JSString
+navigateWASM viewName = do
+    let view = T.pack $ JS.unpack viewName
+    logWASM $ "Navigation event: " <> view
+    
+    let eventJson = "{\"NavigateEvent\":\"" <> view <> "\"}"
+    result <- handleEventWASM (toJSString eventJson)
+    
+    logWASM "Navigation completed"
+    return result
+
+-- Handle attestation submission from forms
+foreign export javascript "submitAttestation" submitAttestationWASM :: JSString -> JSString -> Double -> IO JSString
+
+submitAttestationWASM :: JSString -> JSString -> Double -> IO JSString  
+submitAttestationWASM questionId answer confidence = do
+    let qId = T.pack $ JS.unpack questionId
+    let ans = T.pack $ JS.unpack answer
+    
+    logWASM $ "Attestation submission: Q=" <> qId <> ", A=" <> ans <> ", C=" <> T.pack (show confidence)
+    
+    let eventJson = "{\"AttestEvent\":{\"attestQuestionId\":\"" <> qId <> 
+                   "\",\"attestAnswer\":\"" <> ans <> 
+                   "\",\"attestConfidence\":" <> T.pack (show confidence) <> "}}"
+    
+    result <- handleEventWASM (toJSString eventJson)
+    logWASM "Attestation processed"
+    return result
+
+-- Get current view rendering
+foreign export javascript "getCurrentView" getCurrentViewWASM :: IO JSString
+
+getCurrentViewWASM :: IO JSString
+getCurrentViewWASM = do
+    logWASM "Rendering current view"
+    renderStateWASM
+
+-- Auto-save function
+foreign export javascript "autosave" autosaveWASM :: IO ()
+
+autosaveWASM :: IO ()
+autosaveWASM = do
+    currentState <- getSystemStateWASM
+    let stateText = T.pack $ JS.unpack currentState
+    writeStateWASM "apstat-system-state" stateText
+    timestamp <- getCurrentTimestamp
+    logWASM $ "Auto-save completed at " <> T.pack (show timestamp)
 
 -- | Test consensus calculation with sample data (JavaScript export)
 foreign export javascript "testConsensus"

@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AP Statistics PoK Blockchain - Phase 3 Interface</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: #ffffff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #4CAF50;
+            padding-bottom: 20px;
+        }
+        
+        .header h1 {
+            color: #4CAF50;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        
+        .status-bar {
+            background: rgba(76, 175, 80, 0.2);
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            border-left: 4px solid #4CAF50;
+        }
+        
+        .navigation {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .nav-button {
+            background: linear-gradient(145deg, #4CAF50, #45a049);
+            border: none;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .nav-button:hover {
+            background: linear-gradient(145deg, #45a049, #4CAF50);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
+        }
+        
+        .nav-button.active {
+            background: linear-gradient(145deg, #2196F3, #1976D2);
+            box-shadow: 0 0 20px rgba(33, 150, 243, 0.5);
+        }
+        
+        .content-area {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .left-panel, .right-panel {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 25px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .form-section {
+            margin-bottom: 30px;
+        }
+        
+        .form-section h3 {
+            color: #4CAF50;
+            margin-bottom: 15px;
+            font-size: 1.4em;
+            border-bottom: 1px solid #4CAF50;
+            padding-bottom: 5px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #e0e0e0;
+            font-weight: bold;
+        }
+        
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #555;
+            border-radius: 5px;
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            font-size: 14px;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            border-color: #4CAF50;
+            outline: none;
+            box-shadow: 0 0 10px rgba(76, 175, 80, 0.3);
+        }
+        
+        .slider-container {
+            margin-top: 10px;
+        }
+        
+        .slider {
+            width: 100%;
+            height: 8px;
+            border-radius: 5px;
+            background: #555;
+            outline: none;
+            -webkit-appearance: none;
+        }
+        
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #4CAF50;
+            cursor: pointer;
+        }
+        
+        .slider-value {
+            display: inline-block;
+            margin-left: 10px;
+            color: #4CAF50;
+            font-weight: bold;
+        }
+        
+        .submit-button {
+            background: linear-gradient(145deg, #FF9800, #F57C00);
+            border: none;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            width: 100%;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+        
+        .submit-button:hover {
+            background: linear-gradient(145deg, #F57C00, #FF9800);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(255, 152, 0, 0.3);
+        }
+        
+        .view-display {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 20px;
+            border-radius: 5px;
+            border: 1px solid #4CAF50;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            min-height: 300px;
+            max-height: 500px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        
+        .message-area {
+            background: rgba(33, 150, 243, 0.2);
+            border: 1px solid #2196F3;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+            min-height: 100px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+        }
+        
+        .error {
+            background: rgba(244, 67, 54, 0.2) !important;
+            border-color: #f44336 !important;
+            color: #ffcdd2;
+        }
+        
+        .success {
+            background: rgba(76, 175, 80, 0.2) !important;
+            border-color: #4CAF50 !important;
+            color: #c8e6c9;
+        }
+        
+        .atom-counter {
+            display: flex;
+            justify-content: space-around;
+            background: rgba(156, 39, 176, 0.2);
+            border: 1px solid #9C27B0;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        
+        .atom-count {
+            text-align: center;
+        }
+        
+        .atom-count .number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #9C27B0;
+        }
+        
+        .atom-count .label {
+            font-size: 0.9em;
+            color: #e0e0e0;
+            margin-top: 5px;
+        }
+        
+        .verification-panel {
+            background: rgba(255, 193, 7, 0.2);
+            border: 1px solid #FFC107;
+            border-radius: 5px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        
+        .verification-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .verification-item:last-child {
+            border-bottom: none;
+        }
+        
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #4CAF50;
+            margin-left: 10px;
+        }
+        
+        .status-indicator.fail {
+            background: #f44336;
+        }
+        
+        @media (max-width: 768px) {
+            .content-area {
+                grid-template-columns: 1fr;
+            }
+            
+            .navigation {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .container {
+                padding: 15px;
+            }
+        }
+        
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: #4CAF50;
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔗 AP Statistics PoK Blockchain</h1>
+            <p>Phase 3: UI & Event Handling Integration | 58 Atoms | 13 Invariants</p>
+            <div class="status-bar">
+                <span id="status">🔄 Initializing WASM module...</span>
+                <span id="loading" class="loading" style="margin-left: 10px;"></span>
+            </div>
+        </div>
+
+        <!-- Atom Counter Display -->
+        <div class="atom-counter">
+            <div class="atom-count">
+                <div class="number">58</div>
+                <div class="label">Total Atoms</div>
+            </div>
+            <div class="atom-count">
+                <div class="number">6</div>
+                <div class="label">Subsystems</div>
+            </div>
+            <div class="atom-count">
+                <div class="number">13</div>
+                <div class="label">Invariants</div>
+            </div>
+            <div class="atom-count">
+                <div class="number" id="events-processed">0</div>
+                <div class="label">Events Processed</div>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="navigation">
+            <button class="nav-button active" onclick="navigateToView('MainMenu')">🏠 Main Menu</button>
+            <button class="nav-button" onclick="navigateToView('ProfileView')">👤 Profile</button>
+            <button class="nav-button" onclick="navigateToView('BlockchainView')">⛓️ Blockchain</button>
+            <button class="nav-button" onclick="navigateToView('QuestionsView')">❓ Questions</button>
+            <button class="nav-button" onclick="navigateToView('ReputationView')">🏆 Reputation</button>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="content-area">
+            <!-- Left Panel - Forms -->
+            <div class="left-panel">
+                <div class="form-section">
+                    <h3>📝 Submit Attestation</h3>
+                    <div class="form-group">
+                        <label for="question-select">Select Question:</label>
+                        <select id="question-select">
+                            <option value="q001">Q001: What is the mean of [1,2,3,4,5]?</option>
+                            <option value="q002">Q002: Calculate standard deviation of [2,4,6,8]</option>
+                            <option value="q003">Q003: Normal distribution z-score for μ=50, σ=10, x=65</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="answer-input">Your Answer:</label>
+                        <input type="text" id="answer-input" placeholder="Enter your answer..." />
+                    </div>
+                    <div class="form-group">
+                        <label for="confidence-slider">Confidence Level: <span class="slider-value" id="confidence-display">3.0</span></label>
+                        <div class="slider-container">
+                            <input type="range" id="confidence-slider" class="slider" min="1.0" max="5.0" step="0.1" value="3.0" 
+                                   oninput="document.getElementById('confidence-display').textContent = this.value" />
+                        </div>
+                    </div>
+                    <button class="submit-button" onclick="submitAttestation()">
+                        🚀 Submit Attestation
+                    </button>
+                </div>
+
+                <div class="form-section">
+                    <h3>👤 Create Profile</h3>
+                    <div class="form-group">
+                        <label for="user-id">User ID:</label>
+                        <input type="text" id="user-id" placeholder="Enter unique user ID..." />
+                    </div>
+                    <div class="form-group">
+                        <label for="pubkey">Public Key:</label>
+                        <input type="text" id="pubkey" placeholder="Auto-generated or paste existing..." />
+                    </div>
+                    <div class="form-group">
+                        <label for="privkey">Private Key:</label>
+                        <input type="password" id="privkey" placeholder="Auto-generated or paste existing..." />
+                    </div>
+                    <button class="submit-button" onclick="createProfile()">
+                        ✨ Create Profile
+                    </button>
+                </div>
+            </div>
+
+            <!-- Right Panel - Current View Display -->
+            <div class="right-panel">
+                <div class="form-section">
+                    <h3>📺 Current View</h3>
+                    <div id="view-display" class="view-display">
+                        Loading current view...
+                    </div>
+                    <button class="submit-button" onclick="refreshCurrentView()" style="margin-top: 15px;">
+                        🔄 Refresh View
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Message Area -->
+        <div id="message-area" class="message-area">
+            Ready to test Phase 3 functionality...
+        </div>
+
+        <!-- Verification Panel -->
+        <div class="verification-panel">
+            <h3>🔍 System Verification</h3>
+            <div id="verification-list">
+                <div class="verification-item">
+                    <span>WASM Module Loaded</span>
+                    <div class="status-indicator" id="wasm-status"></div>
+                </div>
+                <div class="verification-item">
+                    <span>All 58 Atoms Available</span>
+                    <div class="status-indicator" id="atoms-status"></div>
+                </div>
+                <div class="verification-item">
+                    <span>UI Functions Exported</span>
+                    <div class="status-indicator" id="ui-status"></div>
+                </div>
+                <div class="verification-item">
+                    <span>Event Processing Active</span>
+                    <div class="status-indicator" id="events-status"></div>
+                </div>
+                <div class="verification-item">
+                    <span>Persistence Layer Ready</span>
+                    <div class="status-indicator" id="persistence-status"></div>
+                </div>
+                <div class="verification-item">
+                    <span>All 13 Invariants Pass</span>
+                    <div class="status-indicator" id="invariants-status"></div>
+                </div>
+            </div>
+            <button class="submit-button" onclick="runFullVerification()" style="margin-top: 15px;">
+                🧪 Run Full System Verification
+            </button>
+        </div>
+    </div>
+
+    <!-- Load WASM bindings -->
+    <script src="dist-wasm/apstat-bindings.js"></script>
+    <script src="apstat-ui.js"></script>
+</body>
+</html>

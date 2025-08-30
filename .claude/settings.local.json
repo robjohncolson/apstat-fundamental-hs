@@ -10,7 +10,8 @@
       "Bash(ghc:*)",
       "Bash(./SimpleTest.exe)",
       "Bash(chmod:*)",
-      "Bash(./build-wasm.sh:*)"
+      "Bash(./build-wasm.sh:*)",
+      "Bash(node:*)"
     ],
     "deny": [],
     "ask": []
