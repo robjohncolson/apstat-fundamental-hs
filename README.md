@@ -42,14 +42,14 @@ The AP Statistics PoK Blockchain represents a paradigm shift from traditional ed
 
 #### Questions Subsystem (14 atoms)
 **Purpose:** Curriculum management and question processing
-- **Data Atoms (8):** prompt, rubric, choices, questionType, difficulty, unit, lesson, tags
-- **Function Atoms (6):** validateMCQ, scoreFRQ, categorizeByDifficulty, filterByUnit, searchByTags, generateRubric
+- **Data Atoms (11):** prompt, rubric, choices, questionType, difficulty, unit, lesson, tags, questionId, distribution, convergence
+- **Function Atoms (3):** validateMCQ, scoreFRQ, calculateConvergence
 - **Key Features:** MCQ hash-based voting, FRQ rubric scoring (1-5 scale)
 
 #### Reputation Subsystem (10 atoms)
 **Purpose:** Confidence-weighted scoring and incentives
-- **Data Atoms (5):** reputationScore, minorityBonus, consensusReward, confidenceWeight, decayFactor
-- **Function Atoms (5):** calculateReputation, applyMinorityBonus, updateConsensusReward, weightByConfidence, applyDecay
+- **Data Atoms (7):** reputationScore, minorityBonus, consensusReward, confidenceWeight, decayFactor, streakBonus, socialScore
+- **Function Atoms (3):** calculateReputation, applyMinorityBonus, applyDecay
 - **Key Features:** 1.5x minority bonuses, confidence weighting, temporal decay
 
 #### Persistence Subsystem (7 atoms)
