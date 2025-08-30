@@ -27,6 +27,7 @@ module UI
     , AttestationData(..)
     , RevealData(..)
     , ScoreData(..)
+    , ProfileData(..)
     -- Helper functions
     , createSystemState
     , validateView
@@ -35,6 +36,7 @@ module UI
 import Data.Aeson (ToJSON, FromJSON)
 import Data.Text (Text)
 import qualified Data.Text as T
+import Data.List (find)
 import GHC.Generics (Generic)
 -- Import all subsystem modules for integration
 import Profile (Profile)
@@ -42,6 +44,10 @@ import Blockchain (BlockchainState)
 import Questions (Question)
 import Reputation (Reputation)
 import Persistence (saveState, createPersistenceState)
+import qualified Blockchain as B
+import qualified Profile as P
+import qualified Questions as Q
+import qualified Reputation as R
 
 -- ============================================================================
 -- U DATA ATOMS (3 atoms per specification)
@@ -80,12 +86,22 @@ data ScoreData = ScoreData
 instance ToJSON ScoreData
 instance FromJSON ScoreData
 
+data ProfileData = ProfileData
+    { profileUserId :: Text
+    , profilePubKey :: Text
+    , profilePrivKey :: Text
+    } deriving (Show, Eq, Generic)
+
+instance ToJSON ProfileData
+instance FromJSON ProfileData
+
 -- | U atom 2: Event types for user interactions
 data Event = 
       AttestEvent AttestationData
     | RevealEvent RevealData  
     | UpdateScoreEvent ScoreData
     | NavigateEvent CurrentView
+    | CreateProfileEvent ProfileData
     deriving (Show, Eq, Generic)
 
 instance ToJSON Event
@@ -132,23 +148,85 @@ handleEvent event state =
     case event of
         NavigateEvent newView -> 
             if validateView newView
-            then state { systemCurrentView = newView, systemRenderBuffer = renderState state { systemCurrentView = newView } }
-            else state  -- Invalid view, no change (Invariant 13)
+            then 
+                let newState = state { systemCurrentView = newView }
+                    renderedView = renderState newState
+                in newState { systemRenderBuffer = renderedView }
+            else state { systemRenderBuffer = "ERROR: Invalid view navigation attempted" }  -- Invalid view, no change (Invariant 13)
             
         AttestEvent attestData -> 
-            -- Process attestation - would integrate with Blockchain module
-            let updatedState = state { systemRenderBuffer = "Attestation processed: " ++ T.unpack (attestQuestionId attestData) }
-            in updatedState
+            -- Validate confidence bounds (Invariant 5)
+            let confidence = attestConfidence attestData
+                questionId' = attestQuestionId attestData
+                answer = attestAnswer attestData
+            in if confidence < 0.0 || confidence > 1.0
+               then state { systemRenderBuffer = "Error: Confidence must be between 0.0 and 1.0" }
+               else if T.null questionId' || T.null answer
+               then state { systemRenderBuffer = "Error: Question ID and answer cannot be empty" }
+               else 
+                   -- Find matching question in system
+                   let matchingQuestion = find (\q -> Q.questionId q == questionId') (systemQuestions state)
+                   in case matchingQuestion of
+                       Nothing -> state { systemRenderBuffer = "Error: Question not found: " ++ T.unpack questionId' }
+                       Just question ->
+                           -- Get attester profile (use first profile for now, in real system this would be from auth)
+                           case systemProfiles state of
+                               [] -> state { systemRenderBuffer = "Error: No attester profile available" }
+                               (attester:_) ->
+                                   let updatedState = state { systemRenderBuffer = "Attestation queued: " ++ T.unpack questionId' }
+                                   in updatedState
             
         RevealEvent revealData ->
-            -- Process AP reveal - would integrate with Blockchain module  
-            let updatedState = state { systemRenderBuffer = "Reveal processed: " ++ T.unpack (revealQuestionId revealData) }
-            in updatedState
+            -- Validate reveal authority and find matching question
+            let questionId' = revealQuestionId revealData
+                answer = revealAnswer revealData
+                matchingQuestion = find (\q -> Q.questionId q == questionId') (systemQuestions state)
+            in case matchingQuestion of
+                Nothing -> state { systemRenderBuffer = "Error: Question not found for reveal: " ++ T.unpack questionId' }
+                Just question ->
+                    -- Check if question already has official answer
+                    case Q.officialAnswer question of
+                        Just _ -> state { systemRenderBuffer = "Error: Official answer already exists for: " ++ T.unpack questionId' }
+                        Nothing ->
+                            -- Queue reveal processing (full operation will happen in processEventQueue)
+                            let updatedState = state { systemRenderBuffer = "Reveal queued: " ++ T.unpack questionId' }
+                            in updatedState
             
         UpdateScoreEvent scoreData ->
-            -- Process score update - would integrate with Reputation module
-            let updatedState = state { systemRenderBuffer = "Score updated for: " ++ T.unpack (scoreUserId scoreData) }
-            in updatedState
+            -- Validate user exists and score delta is reasonable
+            let userIdStr = T.unpack (scoreUserId scoreData)
+                scoreDelta' = scoreDelta scoreData
+                matchingProfile = find (\p -> P.userId p == userIdStr) (systemProfiles state)
+            in if abs scoreDelta' > 1000.0  -- Prevent extreme score changes
+               then state { systemRenderBuffer = "Error: Score delta too large: " ++ show scoreDelta' }
+               else case matchingProfile of
+                   Nothing -> state { systemRenderBuffer = "Error: User not found: " ++ userIdStr }
+                   Just _ ->
+                       -- Validate that we have corresponding reputation entry
+                       let profileCount = length (systemProfiles state)
+                           reputationCount = length (systemReputation state)
+                       in if profileCount /= reputationCount
+                          then state { systemRenderBuffer = "Error: Reputation/Profile count mismatch" }
+                          else
+                              -- Queue score update (full operation will happen in processEventQueue)
+                              let updatedState = state { systemRenderBuffer = "Score update queued for: " ++ userIdStr }
+                              in updatedState
+            
+        CreateProfileEvent profileData ->
+            -- Validate unique userId against existing profiles
+            let userIdStr = T.unpack (profileUserId profileData)
+                existingProfile = any (\p -> P.userId p == userIdStr) (systemProfiles state)
+            in if existingProfile
+               then state { systemRenderBuffer = "Error: User ID already exists: " ++ userIdStr }
+               else
+                   -- Create new profile (pure operation)
+                   let newProfile = P.createProfile userIdStr (T.unpack $ profilePubKey profileData) (T.unpack $ profilePrivKey profileData)
+                       -- Update system state with new profile (reputation and transaction will be added in processEventQueue)
+                       updatedState = state 
+                           { systemProfiles = newProfile : systemProfiles state
+                           , systemRenderBuffer = "Profile creation queued for: " ++ userIdStr
+                           }
+                   in updatedState
 
 -- | U atom 6: Process event queue sequentially
 -- Enforces Invariant 11: Persistence Integrity (triggers saves)
