@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Guide - AP Statistics PoK Blockchain</title>
+    <link rel="stylesheet" href="../assets/styles.css">
+    <style>
+        .guide-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: rgba(0,0,0,0.8);
+            border-radius: 10px;
+            color: white;
+        }
+        .guide-header {
+            text-align: center;
+            border-bottom: 2px solid #4CAF50;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        .guide-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+            border-left: 4px solid #4CAF50;
+        }
+        .step-list {
+            counter-reset: step-counter;
+        }
+        .step-item {
+            counter-increment: step-counter;
+            margin-bottom: 15px;
+            padding-left: 30px;
+            position: relative;
+        }
+        .step-item::before {
+            content: counter(step-counter);
+            position: absolute;
+            left: 0;
+            top: 0;
+            background: #4CAF50;
+            color: white;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .highlight-box {
+            background: rgba(76, 175, 80, 0.2);
+            border: 1px solid #4CAF50;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+        }
+        .warning-box {
+            background: rgba(255, 152, 0, 0.2);
+            border: 1px solid #FF9800;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+        }
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background: #4CAF50;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="guide-container">
+        <div class="guide-header">
+            <h1>🎓 Student Guide</h1>
+            <h2>AP Statistics PoK Blockchain</h2>
+            <p>Learn statistics through peer consensus and blockchain technology</p>
+        </div>
+
+        <div class="guide-section">
+            <h3>🚀 Quick Start</h3>
+            <div class="step-list">
+                <div class="step-item">
+                    <strong>Open the System:</strong> Double-click index.html or open it in any modern web browser (Chrome, Firefox, Safari, Edge)
+                </div>
+                <div class="step-item">
+                    <strong>Take the Tutorial:</strong> Click the "🎓 Tutorial" button for a guided walkthrough
+                </div>
+                <div class="step-item">
+                    <strong>Select a Question:</strong> Choose an AP Statistics question from the dropdown menu
+                </div>
+                <div class="step-item">
+                    <strong>Submit Your Answer:</strong> Enter your answer and confidence level (1-5 scale)
+                </div>
+                <div class="step-item">
+                    <strong>Watch Consensus Form:</strong> See how your peers' answers create emergent knowledge
+                </div>
+            </div>
+        </div>
+
+        <div class="guide-section">
+            <h3>📚 How It Works</h3>
+            <p>This system teaches AP Statistics through <strong>proof of knowledge</strong> and <strong>peer consensus</strong>. Instead of having a teacher give you the "right" answer, you and your classmates discover it together!</p>
+
+            <h4>The Process:</h4>
+            <div class="step-list">
+                <div class="step-item">
+                    <strong>Question Selection:</strong> Pick from real AP Statistics curriculum questions
+                </div>
+                <div class="step-item">
+                    <strong>Answer Submission:</strong> Provide your answer with a confidence rating
+                </div>
+                <div class="step-item">
+                    <strong>Peer Attestation:</strong> Other students verify or challenge your answer
+                </div>
+                <div class="step-item">
+                    <strong>Consensus Formation:</strong> The system tracks agreement levels
+                </div>
+                <div class="step-item">
+                    <strong>Knowledge Emergence:</strong> The "correct" answer emerges through peer agreement
+                </div>
+            </div>
+
+            <div class="highlight-box">
+                <h4>🔑 Key Insight</h4>
+                <p>There's no hidden answer key! Knowledge emerges through collective intelligence, just like in real scientific communities.</p>
+            </div>
+        </div>
+
+        <div class="guide-section">
+            <h3>🎯 Understanding Question Types</h3>
+            
+            <h4>Multiple Choice Questions (MCQ)</h4>
+            <ul>
+                <li><strong>What you see:</strong> Standard AP-style multiple choice with options A-E</li>
+                <li><strong>How to answer:</strong> Type the letter (A, B, C, D, or E)</li>
+                <li><strong>Special feature:</strong> Your answer is encrypted until consensus forms</li>
+                <li><strong>Why encrypted?</strong> Prevents bandwagon effects and encourages independent thinking</li>
+            </ul>
+
+            <h4>Free Response Questions (FRQ)</h4>
+            <ul>
+                <li><strong>What you see:</strong> Open-ended statistical analysis problems</li>
+                <li><strong>How to answer:</strong> Provide detailed explanations with your reasoning</li>
+                <li><strong>Scoring:</strong> Peers rate your response on a 1-5 scale using the rubric</li>
+                <li><strong>Consensus:</strong> Statistical analysis determines the "best" answer</li>
+            </ul>
+        </div>
+
+        <div class="guide-section">
+            <h3>⚖️ Confidence Levels & Strategy</h3>
+            <p>Your confidence level (1-5) affects your reputation score:</p>
+
+            <div class="step-list">
+                <div class="step-item">
+                    <strong>Level 1-2 (Low Confidence):</strong> "I'm mostly guessing"
+                    <br><em>Low risk, low reward - small reputation gain if right</em>
+                </div>
+                <div class="step-item">
+                    <strong>Level 3 (Medium Confidence):</strong> "I think I know, but not sure"
+                    <br><em>Moderate risk/reward - standard reputation changes</em>
+                </div>
+                <div class="step-item">
+                    <strong>Level 4-5 (High Confidence):</strong> "I'm very sure about this"
+                    <br><em>High risk, high reward - big reputation gain if right, big loss if wrong</em>
+                </div>
+            </div>
+
+            <div class="warning-box">
+                <h4>⚠️ Strategy Tip</h4>
+                <p>Be honest about your confidence! The system rewards accurate self-assessment. Overconfidence hurts your long-term reputation.</p>
+            </div>
+        </div>
+
+        <div class="guide-section">
+            <h3>🏆 Reputation System</h3>
+            <p>Your reputation reflects your statistical knowledge and peer collaboration skills:</p>
+
+            <h4>How You Gain Reputation:</h4>
+            <ul>
+                <li><strong>Correct Attestations:</strong> Being right, especially when confident</li>
+                <li><strong>Early Consensus:</strong> Being among the first to identify the correct answer</li>
+                <li><strong>Minority Bonus:</strong> 1.5x bonus when you're right but in the minority initially</li>
+                <li><strong>Peer Validation:</strong> Having your FRQ answers rated highly by classmates</li>
+            </ul>
+
+            <h4>How You Lose Reputation:</h4>
+            <ul>
+                <li><strong>Wrong Answers:</strong> Especially when you were highly confident</li>
+                <li><strong>Inconsistent Answers:</strong> Changing your mind frequently on similar questions</li>
+                <li><strong>Poor FRQ Scores:</strong> Consistently low peer ratings on explanations</li>
+            </ul>
+
+            <div class="highlight-box">
+                <h4>🎯 Goal</h4>
+                <p>Build reputation through consistent, thoughtful participation. Quality over quantity!</p>
+            </div>
+        </div>
+
+        <div class="guide-section">
+            <h3>📊 Understanding the Visualizations</h3>
+            
+            <h4>Convergence Chart</h4>
+            <p>Shows how agreement builds over time. A rising line means people are coming to consensus.</p>
+
+            <h4>Distribution Chart</h4>
+            <p>For MCQ: Shows how many people chose each option (A, B, C, D, E)</p>
+            <p>For FRQ: Shows the range of scores (1-5) given to different answers</p>
+
+            <h4>System Health Indicators</h4>
+            <p>Green dots mean everything is working. These check the 13 mathematical rules (invariants) that keep the system fair and accurate.</p>
+        </div>
+
+        <div class="guide-section">
+            <h3>🔍 Learning the Invariants</h3>
+            <p>The system operates under 13 mathematical rules called "invariants." Click the ? buttons throughout the interface to learn about them!</p>
+
+            <h4>Key Invariants for Students:</h4>
+            <ul>
+                <li><strong>Identity Integrity:</strong> Only registered users can participate</li>
+                <li><strong>Progressive Quorum:</strong> Higher agreement = fewer votes needed</li>
+                <li><strong>Confidence Weighting:</strong> Your confidence affects your score</li>
+                <li><strong>Hash Validation:</strong> MCQ answers stay secret until consensus</li>
+                <li><strong>Rate Limiting:</strong> Can't spam the same question repeatedly</li>
+            </ul>
+
+            <div class="highlight-box">
+                <h4>💡 Educational Value</h4>
+                <p>These invariants teach you about fairness, security, and mathematical rigor in decentralized systems!</p>
+            </div>
+        </div>
+
+        <div class="guide-section">
+            <h3>🌐 Offline Mode</h3>
+            <p>This system works completely offline! Perfect for classrooms with unreliable internet.</p>
+
+            <h4>Offline Features:</h4>
+            <ul>
+                <li>All curriculum questions available locally</li>
+                <li>Complete blockchain functionality</li>
+                <li>Reputation tracking and calculation</li>
+                <li>All visualizations and educational features</li>
+                <li>Automatic data saving to your browser</li>
+            </ul>
+
+            <div class="warning-box">
+                <h4>📱 Device Requirements</h4>
+                <p>Works on any device with a modern web browser. Minimum screen size: 320px width (older smartphones work fine!).</p>
+            </div>
+        </div>
+
+        <div class="guide-section">
+            <h3>🆘 Troubleshooting</h3>
+            
+            <h4>Common Issues:</h4>
+            <div class="step-list">
+                <div class="step-item">
+                    <strong>Page won't load:</strong> Make sure you're using a modern browser (Chrome 90+, Firefox 88+, Safari 14+)
+                </div>
+                <div class="step-item">
+                    <strong>Buttons don't work:</strong> Check if JavaScript is enabled in your browser settings
+                </div>
+                <div class="step-item">
+                    <strong>Charts not showing:</strong> Try refreshing the page (Ctrl+R or Cmd+R)
+                </div>
+                <div class="step-item">
+                    <strong>Offline indicator stuck:</strong> Check your internet connection, or just continue offline
+                </div>
+                <div class="step-item">
+                    <strong>Lost your progress:</strong> Check if cookies/local storage are enabled
+                </div>
+            </div>
+
+            <h4>Getting Help:</h4>
+            <ul>
+                <li>Use the built-in tutorial (🎓 Tutorial button)</li>
+                <li>Click ? buttons for context-sensitive help</li>
+                <li>Ask your teacher about specific statistical concepts</li>
+                <li>Run "Full System Test" to check for technical issues</li>
+            </ul>
+        </div>
+
+        <div class="guide-section">
+            <h3>🎓 Learning Objectives</h3>
+            <p>By using this system, you will:</p>
+
+            <ul>
+                <li><strong>Master AP Statistics concepts</strong> through active problem-solving</li>
+                <li><strong>Develop statistical reasoning</strong> by explaining your thinking to peers</li>
+                <li><strong>Learn about consensus mechanisms</strong> used in modern technology</li>
+                <li><strong>Practice self-assessment</strong> through confidence rating</li>
+                <li><strong>Experience collaborative learning</strong> in a structured environment</li>
+                <li><strong>Understand fairness in decentralized systems</strong> through invariant learning</li>
+            </ul>
+
+            <div class="highlight-box">
+                <h4>🌟 Beyond AP Stats</h4>
+                <p>These skills prepare you for college statistics, data science, and understanding how modern blockchain and consensus systems work!</p>
+            </div>
+        </div>
+
+        <div class="guide-section">
+            <h3>📝 Academic Integrity</h3>
+            
+            <div class="warning-box">
+                <h4>⚖️ Important Guidelines</h4>
+                <ul>
+                    <li>Submit your own original answers and reasoning</li>
+                    <li>Don't coordinate answers with classmates outside the system</li>
+                    <li>The goal is learning, not gaming the reputation system</li>
+                    <li>Be honest about your confidence levels</li>
+                    <li>Rate peers' FRQ responses fairly and objectively</li>
+                </ul>
+            </div>
+
+            <p>Remember: The system is designed to help you learn. Gaming it defeats the educational purpose!</p>
+        </div>
+
+        <a href="../index.html" class="back-link">🏠 Return to Main System</a>
+    </div>
+</body>
+</html>

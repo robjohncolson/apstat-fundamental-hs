@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Guide - AP Statistics PoK Blockchain</title>
+    <link rel="stylesheet" href="../assets/styles.css">
+    <style>
+        .guide-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background: rgba(0,0,0,0.8);
+            border-radius: 10px;
+            color: white;
+        }
+        .guide-header {
+            text-align: center;
+            border-bottom: 2px solid #2196F3;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        .guide-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+            border-left: 4px solid #2196F3;
+        }
+        .teacher-note {
+            background: rgba(33, 150, 243, 0.2);
+            border: 1px solid #2196F3;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+        }
+        .implementation-box {
+            background: rgba(76, 175, 80, 0.2);
+            border: 1px solid #4CAF50;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+        }
+        .warning-box {
+            background: rgba(255, 152, 0, 0.2);
+            border: 1px solid #FF9800;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+        }
+        .assessment-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        .assessment-table th, .assessment-table td {
+            border: 1px solid #666;
+            padding: 10px;
+            text-align: left;
+        }
+        .assessment-table th {
+            background: rgba(33, 150, 243, 0.3);
+        }
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background: #2196F3;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="guide-container">
+        <div class="guide-header">
+            <h1>👨‍🏫 Teacher Guide</h1>
+            <h2>AP Statistics PoK Blockchain</h2>
+            <p>Implementing blockchain-based peer learning in your AP Statistics classroom</p>
+        </div>
+
+        <div class="guide-section">
+            <h3>🎯 Educational Philosophy</h3>
+            <p>This system implements <strong>constructivist learning</strong> through blockchain technology. Instead of providing authoritative answers, students build knowledge collaboratively through peer consensus and statistical validation.</p>
+
+            <div class="teacher-note">
+                <h4>🔑 Key Pedagogical Benefits</h4>
+                <ul>
+                    <li><strong>Active Learning:</strong> Students must explain their reasoning, not just provide answers</li>
+                    <li><strong>Peer Assessment:</strong> Students learn by evaluating classmates' work</li>
+                    <li><strong>Metacognition:</strong> Confidence ratings encourage self-reflection</li>
+                    <li><strong>Statistical Thinking:</strong> Students experience convergence, distributions, and consensus in real-time</li>
+                    <li><strong>Technology Integration:</strong> Authentic use of blockchain concepts in mathematics</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="guide-section">
+            <h3>🚀 Classroom Implementation</h3>
+
+            <h4>Pre-Class Setup (15 minutes)</h4>
+            <ol>
+                <li>Download and extract the ZIP file to a shared network location</li>
+                <li>Test the system on one computer to ensure it loads properly</li>
+                <li>Prepare backup USB drives with the system files</li>
+                <li>Review the day's questions in the curriculum.json file</li>
+            </ol>
+
+            <h4>Student Distribution Options</h4>
+            
+            <div class="implementation-box">
+                <h5>Option 1: Network Share</h5>
+                <ul>
+                    <li>Place the dist-package folder on a shared network drive</li>
+                    <li>Students navigate to \\server\apstat\index.html</li>
+                    <li>Each student's progress saves locally to their browser</li>
+                    <li>No internet required once files are accessed</li>
+                </ul>
+            </div>
+
+            <div class="implementation-box">
+                <h5>Option 2: USB Distribution</h5>
+                <ul>
+                    <li>Copy the system to USB drives or SD cards</li>
+                    <li>Students copy to their local machines</li>
+                    <li>Fully offline - works without network at all</li>
+                    <li>Each student has independent instance</li>
+                </ul>
+            </div>
+
+            <div class="implementation-box">
+                <h5>Option 3: Individual Downloads</h5>
+                <ul>
+                    <li>Email the ZIP file to students</li>
+                    <li>Students extract and run locally</li>
+                    <li>Great for homework or remote learning</li>
+                    <li>Each student manages their own copy</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="guide-section">
+            <h3>📚 Curriculum Integration</h3>
+            
+            <p>The system includes questions covering the complete AP Statistics curriculum:</p>
+
+            <table class="assessment-table">
+                <thead>
+                    <tr>
+                        <th>Unit</th>
+                        <th>Topics Covered</th>
+                        <th>Question Types</th>
+                        <th>Learning Focus</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Unit 1</td>
+                        <td>Descriptive Statistics, Distributions</td>
+                        <td>MCQ, FRQ</td>
+                        <td>Statistical reasoning, interpretation</td>
+                    </tr>
+                    <tr>
+                        <td>Unit 2</td>
+                        <td>Sampling and Study Design</td>
+                        <td>FRQ focused</td>
+                        <td>Critical evaluation, bias identification</td>
+                    </tr>
+                    <tr>
+                        <td>Unit 3</td>
+                        <td>Probability</td>
+                        <td>MCQ, calculations</td>
+                        <td>Mathematical precision, reasoning</td>
+                    </tr>
+                    <tr>
+                        <td>Unit 4</td>
+                        <td>Random Variables</td>
+                        <td>Mixed</td>
+                        <td>Distribution understanding</td>
+                    </tr>
+                    <tr>
+                        <td>Units 5-7</td>
+                        <td>Inference (proportions, means, slopes)</td>
+                        <td>FRQ heavy</td>
+                        <td>Statistical argumentation</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="teacher-note">
+                <h4>📝 Alignment with AP Standards</h4>
+                <p>Questions are designed to meet AP Statistical Practices:</p>
+                <ul>
+                    <li><strong>SP1:</strong> Making sense of problems (question selection)</li>
+                    <li><strong>SP2:</strong> Reasoning abstractly (confidence assessment)</li>
+                    <li><strong>SP3:</strong> Constructing viable arguments (FRQ explanations)</li>
+                    <li><strong>SP4:</strong> Analyzing statistical reasoning (peer assessment)</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="guide-section">
+            <h3>📊 Assessment and Grading</h3>
+
+            <h4>Using Reputation Scores</h4>
+            <p>Student reputation scores can inform (but not replace) traditional assessment:</p>
+
+            <div class="implementation-box">
+                <h5>Formative Assessment</h5>
+                <ul>
+                    <li>Monitor daily participation through event counts</li>
+                    <li>Identify struggling students through low confidence patterns</li>
+                    <li>Use convergence rates to gauge class understanding</li>
+                    <li>Review outlier flags to catch misconceptions early</li>
+                </ul>
+            </div>
+
+            <div class="implementation-box">
+                <h5>Summative Assessment Integration</h5>
+                <ul>
+                    <li>Reputation scores as participation/engagement grade (10-20%)</li>
+                    <li>FRQ peer-scoring accuracy as assessment skill grade</li>
+                    <li>Confidence calibration as metacognitive awareness score</li>
+                    <li>Traditional AP-style assessments remain primary (60-70%)</li>
+                </ul>
+            </div>
+
+            <h4>Exporting Student Data</h4>
+            <p>Students can export their state using the "💾 Export State" button. This creates a JSON file with:</p>
+            <ul>
+                <li>All attestations submitted</li>
+                <li>Reputation history</li>
+                <li>Confidence patterns</li>
+                <li>Questions attempted</li>
+                <li>Peer scoring records</li>
+            </ul>
+
+            <div class="warning-box">
+                <h4>⚖️ Privacy Considerations</h4>
+                <p>All data stays local to each student's browser. No personal information is transmitted. Comply with your school's technology and privacy policies.</p>
+            </div>
+        </div>
+
+        <div class="guide-section">
+            <h3>🎓 Facilitating Learning</h3>
+
+            <h4>Day 1: Introduction Session</h4>
+            <ol>
+                <li><strong>Demo (10 min):</strong> Show the tutorial on the projector</li>
+                <li><strong>Guided Practice (15 min):</strong> Have students work through first attestation together</li>
+                <li><strong>Explanation (10 min):</strong> Discuss how consensus relates to statistical inference</li>
+                <li><strong>Independent Work (15 min):</strong> Students complete 2-3 additional questions</li>
+            </ol>
+
+            <h4>Ongoing Sessions</h4>
+            <div class="teacher-note">
+                <h5>🔍 Monitoring Tools</h5>
+                <ul>
+                    <li><strong>Walk around:</strong> Check student screens for confidence patterns</li>
+                    <li><strong>Convergence watching:</strong> Project class consensus rates on board</li>
+                    <li><strong>Question selection:</strong> Note which questions cause low convergence</li>
+                    <li><strong>Help requests:</strong> Students struggling with invariants need conceptual support</li>
+                </ul>
+            </div>
+
+            <h4>Discussion Prompts</h4>
+            <ul>
+                <li>"Why did this question have low convergence? What does that tell us?"</li>
+                <li>"How is peer consensus similar to scientific peer review?"</li>
+                <li>"When might statistical consensus be wrong? How do we guard against it?"</li>
+                <li>"How does your confidence affect your learning strategy?"</li>
+            </ul>
+        </div>
+
+        <div class="guide-section">
+            <h3>🔧 Technical Management</h3>
+
+            <h4>System Requirements</h4>
+            <ul>
+                <li><strong>Browsers:</strong> Chrome 90+, Firefox 88+, Safari 14+, Edge 90+</li>
+                <li><strong>Memory:</strong> 512MB RAM minimum, 1GB recommended</li>
+                <li><strong>Storage:</strong> 50MB per student for local data</li>
+                <li><strong>Network:</strong> None required after initial file distribution</li>
+            </ul>
+
+            <h4>Troubleshooting Common Issues</h4>
+            <div class="warning-box">
+                <h5>Students Can't Load System</h5>
+                <ul>
+                    <li>Check browser version (update if necessary)</li>
+                    <li>Verify JavaScript is enabled</li>
+                    <li>Clear browser cache and cookies</li>
+                    <li>Try private/incognito mode</li>
+                </ul>
+            </div>
+
+            <div class="warning-box">
+                <h5>Performance Issues</h5>
+                <ul>
+                    <li>Close other browser tabs</li>
+                    <li>Check available RAM (close other applications)</li>
+                    <li>Use Chrome for best performance</li>
+                    <li>Disable browser extensions if necessary</li>
+                </ul>
+            </div>
+
+            <h4>Backing Up Student Progress</h4>
+            <ol>
+                <li>Remind students to use "Export State" regularly</li>
+                <li>Create a shared folder for student exports</li>
+                <li>Consider periodic "save parties" where everyone exports</li>
+                <li>Keep backup copies of the system files</li>
+            </ol>
+        </div>
+
+        <div class="guide-section">
+            <h3>📈 Advanced Pedagogical Uses</h3>
+
+            <h4>Cross-Class Competitions</h4>
+            <ul>
+                <li>Compare convergence rates between class periods</li>
+                <li>Hold "statistics olympics" with timed consensus challenges</li>
+                <li>Create inter-school competitions (export/import states)</li>
+            </ul>
+
+            <h4>Research Projects</h4>
+            <ul>
+                <li>Students analyze their own confidence calibration over time</li>
+                <li>Study factors that affect consensus formation</li>
+                <li>Investigate bias in peer scoring of FRQs</li>
+                <li>Compare blockchain consensus to democratic voting</li>
+            </ul>
+
+            <h4>Differentiated Instruction</h4>
+            <div class="implementation-box">
+                <h5>For Advanced Students</h5>
+                <ul>
+                    <li>Challenge them to achieve high reputation with high confidence</li>
+                    <li>Have them mentor struggling classmates</li>
+                    <li>Assign investigation of the 13 invariants</li>
+                    <li>Create new questions for peer testing</li>
+                </ul>
+            </div>
+
+            <div class="implementation-box">
+                <h5>For Struggling Students</h5>
+                <ul>
+                    <li>Focus on building confidence through low-stakes questions</li>
+                    <li>Pair with stronger students for FRQ scoring practice</li>
+                    <li>Use tutorial mode repeatedly</li>
+                    <li>Emphasize learning over reputation building</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="guide-section">
+            <h3>🌐 Connection to Modern Technology</h3>
+            <p>This system provides authentic exposure to blockchain concepts without the complexity:</p>
+
+            <h4>Real-World Connections</h4>
+            <ul>
+                <li><strong>Cryptocurrency:</strong> How Bitcoin achieves consensus without central authority</li>
+                <li><strong>Democratic Systems:</strong> Voting mechanisms and quorum requirements</li>
+                <li><strong>Scientific Peer Review:</strong> How academic knowledge is validated</li>
+                <li><strong>AI Training:</strong> How machine learning models achieve consensus on classifications</li>
+            </ul>
+
+            <div class="teacher-note">
+                <h4>🔗 Cross-Curricular Opportunities</h4>
+                <ul>
+                    <li><strong>Computer Science:</strong> Discuss algorithms and distributed systems</li>
+                    <li><strong>Social Studies:</strong> Compare to democratic institutions and governance</li>
+                    <li><strong>Economics:</strong> Explore incentive mechanisms and game theory</li>
+                    <li><strong>Psychology:</strong> Examine bias, confidence, and group decision-making</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="guide-section">
+            <h3>📋 Lesson Plan Template</h3>
+
+            <h4>50-Minute Class Period</h4>
+            <table class="assessment-table">
+                <thead>
+                    <tr>
+                        <th>Time</th>
+                        <th>Activity</th>
+                        <th>Focus</th>
+                        <th>Teacher Role</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>0-5 min</td>
+                        <td>System startup, daily question preview</td>
+                        <td>Technical setup</td>
+                        <td>Troubleshoot individual issues</td>
+                    </tr>
+                    <tr>
+                        <td>5-15 min</td>
+                        <td>Individual attestation submission</td>
+                        <td>Content mastery</td>
+                        <td>Monitor confidence patterns</td>
+                    </tr>
+                    <tr>
+                        <td>15-25 min</td>
+                        <td>Peer scoring (for FRQs)</td>
+                        <td>Assessment skills</td>
+                        <td>Guide rubric interpretation</td>
+                    </tr>
+                    <tr>
+                        <td>25-35 min</td>
+                        <td>Consensus observation and discussion</td>
+                        <td>Statistical reasoning</td>
+                        <td>Facilitate analysis of results</td>
+                    </tr>
+                    <tr>
+                        <td>35-45 min</td>
+                        <td>Reflection and concept connection</td>
+                        <td>Metacognition</td>
+                        <td>Lead discussion, make connections</td>
+                    </tr>
+                    <tr>
+                        <td>45-50 min</td>
+                        <td>Export progress, preview next class</td>
+                        <td>Organization</td>
+                        <td>Ensure all students save work</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="guide-section">
+            <h3>⚠️ Important Reminders</h3>
+
+            <div class="warning-box">
+                <h4>Academic Integrity</h4>
+                <ul>
+                    <li>Emphasize that the goal is learning, not gaming the reputation system</li>
+                    <li>Monitor for unusual consensus patterns that might indicate coordination</li>
+                    <li>Discuss honest confidence self-assessment</li>
+                    <li>Address any attempts to manipulate the system</li>
+                </ul>
+            </div>
+
+            <div class="warning-box">
+                <h4>Learning vs. Gaming</h4>
+                <ul>
+                    <li>Some students may try to optimize reputation over learning</li>
+                    <li>Emphasize process over outcome in your grading</li>
+                    <li>Use reflection questions to assess true understanding</li>
+                    <li>Celebrate thoughtful minority positions, not just high scores</li>
+                </ul>
+            </div>
+
+            <div class="teacher-note">
+                <h4>💡 Remember</h4>
+                <p>This system is a <strong>learning tool</strong>, not a replacement for teacher expertise. Use it to enhance discussion, reveal misconceptions, and provide authentic statistical experiences.</p>
+            </div>
+        </div>
+
+        <div class="guide-section">
+            <h3>📞 Support Resources</h3>
+            
+            <h4>Built-in Help</h4>
+            <ul>
+                <li>Tutorial system for students</li>
+                <li>Invariant explanations (? buttons)</li>
+                <li>System health checks</li>
+                <li>Context-sensitive tooltips</li>
+            </ul>
+
+            <h4>Technical Support</h4>
+            <ul>
+                <li>Run "Full System Test" for diagnostic information</li>
+                <li>Check browser console for error messages (F12)</li>
+                <li>Verify all files are present in the package</li>
+                <li>Test on a different browser if issues persist</li>
+            </ul>
+        </div>
+
+        <a href="../index.html" class="back-link">🏠 Return to Main System</a>
+    </div>
+</body>
+</html>

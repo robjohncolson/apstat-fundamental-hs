@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Technical Reference - AP Statistics PoK Blockchain</title>
+    <link rel="stylesheet" href="../assets/styles.css">
+    <style>
+        .guide-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background: rgba(0,0,0,0.8);
+            border-radius: 10px;
+            color: white;
+            font-family: 'Courier New', monospace;
+        }
+        .guide-header {
+            text-align: center;
+            border-bottom: 2px solid #9C27B0;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        .guide-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+            border-left: 4px solid #9C27B0;
+        }
+        .code-block {
+            background: rgba(0,0,0,0.7);
+            border: 1px solid #666;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 15px 0;
+            overflow-x: auto;
+            font-size: 12px;
+        }
+        .atom-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 12px;
+        }
+        .atom-table th, .atom-table td {
+            border: 1px solid #666;
+            padding: 8px;
+            text-align: left;
+        }
+        .atom-table th {
+            background: rgba(156, 39, 176, 0.3);
+        }
+        .invariant-box {
+            background: rgba(255, 193, 7, 0.2);
+            border: 1px solid #FFC107;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+        }
+        .api-method {
+            background: rgba(76, 175, 80, 0.2);
+            border-left: 4px solid #4CAF50;
+            padding: 15px;
+            margin: 10px 0;
+        }
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background: #9C27B0;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="guide-container">
+        <div class="guide-header">
+            <h1>⚙️ Technical Reference</h1>
+            <h2>AP Statistics PoK Blockchain</h2>
+            <p>Complete system architecture and API documentation</p>
+        </div>
+
+        <div class="guide-section">
+            <h3>🏗️ System Architecture Overview</h3>
+            <p>The AP Statistics PoK Blockchain implements a formal 58-atom mathematical model across 6 subsystems, verified by 13 invariants, compiled to WebAssembly for browser deployment.</p>
+
+            <h4>Core Architecture Pattern</h4>
+            <div class="code-block">
+S = P ∪ B ∪ Q ∪ R ∪ P2 ∪ U
+
+Where:
+- P  (Profile):     Identity and key management - 11 atoms  
+- B  (Blockchain):  Consensus and transactions - 25 atoms
+- Q  (Questions):   Curriculum and validation - 14 atoms
+- R  (Reputation):  Scoring and bonuses - 10 atoms  
+- P2 (Persistence): State serialization - 7 atoms
+- U  (UI):          Rendering and events - 6 atoms
+
+Total: 58 irreducible atoms
+            </div>
+
+            <h4>Technology Stack</h4>
+            <ul>
+                <li><strong>Backend:</strong> Haskell (GHC 9.4+) → WebAssembly via GHCJS</li>
+                <li><strong>Frontend:</strong> Pure JavaScript ES6+ with Web APIs</li>
+                <li><strong>Storage:</strong> IndexedDB + localStorage for persistence</li>
+                <li><strong>Offline:</strong> Service Worker with cache-first strategy</li>
+                <li><strong>Crypto:</strong> Web Crypto API (SHA-256, signature verification)</li>
+                <li><strong>UI:</strong> Pure CSS3 with responsive design</li>
+            </ul>
+        </div>
+
+        <div class="guide-section">
+            <h3>⚛️ Complete Atom Specification</h3>
+            
+            <h4>Profile Subsystem (P) - 11 atoms</h4>
+            <table class="atom-table">
+                <thead>
+                    <tr><th>Atom</th><th>Type</th><th>Description</th><th>Constraints</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>P1</td><td>username</td><td>String</td><td>Unique identifier, 3-20 chars</td></tr>
+                    <tr><td>P2</td><td>pubkey</td><td>String</td><td>ED25519 public key, hex encoded</td></tr>
+                    <tr><td>P3</td><td>privkey</td><td>String</td><td>ED25519 private key, encrypted</td></tr>
+                    <tr><td>P4</td><td>reputationScore</td><td>Float</td><td>≥ 0, starts at 100.0</td></tr>
+                    <tr><td>P5</td><td>archetype</td><td>Enum</td><td>{Student, TA, Instructor}</td></tr>
+                    <tr><td>P6</td><td>transactionHistory</td><td>Array[Tx]</td><td>Chronologically ordered</td></tr>
+                    <tr><td>P7</td><td>seedphrase</td><td>String</td><td>12-word BIP39 mnemonic</td></tr>
+                    <tr><td>P8</td><td>wordList</td><td>Array[String]</td><td>2048 BIP39 words</td></tr>
+                    <tr><td>P9</td><td>deriveKeysFromSeed</td><td>Function</td><td>String → (String, String)</td></tr>
+                    <tr><td>P10</td><td>selectRandomWords</td><td>Function</td><td>Array[String] → String</td></tr>
+                    <tr><td>P11</td><td>calculateArchetype</td><td>Function</td><td>Array[Tx] → Enum</td></tr>
+                </tbody>
+            </table>
+
+            <h4>Blockchain Subsystem (B) - 25 atoms</h4>
+            <table class="atom-table">
+                <thead>
+                    <tr><th>Atom</th><th>Type</th><th>Description</th><th>ADR Compliance</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>B1</td><td>hash</td><td>String</td><td>SHA-256, 64 hex chars</td></tr>
+                    <tr><td>B2</td><td>prevHash</td><td>String</td><td>Links blocks chronologically</td></tr>
+                    <tr><td>B3</td><td>timestamp</td><td>Float</td><td>Unix epoch milliseconds</td></tr>
+                    <tr><td>B4</td><td>nonce</td><td>Int</td><td>Mining proof of work</td></tr>
+                    <tr><td>B5</td><td>questionId</td><td>String</td><td>References curriculum.json</td></tr>
+                    <tr><td>B6</td><td>answerHash</td><td>String</td><td>SHA-256 of MCQ choice (ADR-028)</td></tr>
+                    <tr><td>B7</td><td>answerText</td><td>String</td><td>FRQ response text</td></tr>
+                    <tr><td>B8</td><td>score</td><td>Float</td><td>1-5 scale for FRQ (ADR-028)</td></tr>
+                    <tr><td>B9</td><td>attesterPubkey</td><td>String</td><td>Signer identity</td></tr>
+                    <tr><td>B10</td><td>signature</td><td>String</td><td>ED25519 signature</td></tr>
+                    <tr><td>B11</td><td>txType</td><td>Enum</td><td>{Attestation, APReveal, CreateUser}</td></tr>
+                    <tr><td>B12</td><td>isMatch</td><td>Bool</td><td>Attestation validation result</td></tr>
+                    <tr><td>B13</td><td>questionDistribution</td><td>Record</td><td>Consensus tracking per question</td></tr>
+                    <tr><td>B14</td><td>mcqDistribution</td><td>Record</td><td>Choice counts {A,B,C,D,E}</td></tr>
+                    <tr><td>B15</td><td>frqScores</td><td>Array[Float]</td><td>1-5 scale scores</td></tr>
+                    <tr><td>B16</td><td>convergence</td><td>Float</td><td>Consensus percentage 0-1</td></tr>
+                    <tr><td>B17</td><td>confidence</td><td>Float</td><td>1-5 scale (ADR-028)</td></tr>
+                    <tr><td>B18</td><td>anonymousSignature</td><td>String</td><td>One-time key for AP reveals</td></tr>
+                    <tr><td>B19</td><td>officialAnswer</td><td>String</td><td>AP reveal answer hint</td></tr>
+                    <tr><td>B20</td><td>sha256Hash</td><td>Function</td><td>String → String</td></tr>
+                    <tr><td>B21</td><td>getCurrentTimestamp</td><td>Function</td><td>() → Float</td></tr>
+                    <tr><td>B22</td><td>validateSignature</td><td>Function</td><td>(String, String) → Bool</td></tr>
+                    <tr><td>B23</td><td>calculateConsensus</td><td>Function</td><td>Array[Attestation] → Bool</td></tr>
+                    <tr><td>B24</td><td>updateDistributions</td><td>Function</td><td>(Array[Tx], Dict) → Dict</td></tr>
+                    <tr><td>B25</td><td>detectOutliers</td><td>Function</td><td>Array[Tx] → Array[String]</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="guide-section">
+            <h3>🔒 Complete Invariant Specifications</h3>
+            
+            <div class="invariant-box">
+                <h4>Invariant 1: Identity Integrity</h4>
+                <div class="code-block">
+Mathematical: ∀ transaction t: t.attesterPubkey ∈ {p.pubkey | p ∈ profiles}
+Implementation: validateAttestation() checks pubkey membership
+Enforcement: Reject transactions from unregistered users
+Testing: Submit attestation with invalid pubkey, verify rejection
+                </div>
+            </div>
+
+            <div class="invariant-box">
+                <h4>Invariant 2: Progressive Quorum (ADR-012/028)</h4>
+                <div class="code-block">
+Mathematical: ∀ block b: |b.attestations| ≥ progressiveQuorum(b.convergence)
+Algorithm: progressiveQuorum(c) = {
+  5, if c < 0.5      // Low convergence
+  4, if 0.5 ≤ c < 0.8  // Medium convergence  
+  3, if c ≥ 0.8      // High convergence
+}
+Implementation: quorumCheck() in consensus validation
+Testing: Submit blocks with insufficient attestations, verify rejection
+                </div>
+            </div>
+
+            <div class="invariant-box">
+                <h4>Invariant 3: Confidence-Weighted Rewards (ADR-028)</h4>
+                <div class="code-block">
+Mathematical: ∀ profile p: p.reputationScore = Σ(applyBonuses(consensus(a), confidence(a)) × minorityBonus(a) × decayScores(time))
+Bonuses: High confidence + correct = 1.5x points
+         High confidence + wrong = -1.5x points
+         Minority correct position = 1.5x bonus
+Implementation: updateReputation() with confidence weighting
+Testing: Submit high/low confidence attestations, verify score changes
+                </div>
+            </div>
+
+            <div class="invariant-box">
+                <h4>Invariant 7: Convergence Calculation</h4>
+                <div class="code-block">
+MCQ Convergence: max_count / total_attestations
+FRQ Convergence: max(0, 1 - (standardDeviation / mean))
+
+Example MCQ: [A:3, B:7, C:2] → convergence = 7/12 = 0.583
+Example FRQ: scores [4,4,4,5] → mean=4.25, std=0.5 → convergence = 1-(0.5/4.25) = 0.88
+                </div>
+            </div>
+
+            <div class="invariant-box">
+                <h4>Invariant 8: Rate Limiting (ADR-028)</h4>
+                <div class="code-block">
+Mathematical: ∀ user u, question q: timeSinceLastAttestation(u, q) > 30 days
+Implementation: checkRateLimit() before accepting attestations  
+Storage: localStorage['lastAttestation'][userId][questionId] = timestamp
+Testing: Submit repeat attestation within 30 days, verify rejection
+                </div>
+            </div>
+        </div>
+
+        <div class="guide-section">
+            <h3>🔌 JavaScript API Reference</h3>
+
+            <h4>Core WASM Interface</h4>
+            <div class="api-method">
+                <h5>APStatWASM.init()</h5>
+                <div class="code-block">
+async init(): Promise&lt;string&gt;
+- Initializes the WASM module and system state
+- Returns: JSON string of initial SystemState
+- Throws: Error if initialization fails
+- Side effects: Sets up global state, loads curriculum
+                </div>
+            </div>
+
+            <div class="api-method">
+                <h5>APStatWASM.createAttestation(questionId, answer, confidence)</h5>
+                <div class="code-block">
+async createAttestation(questionId: string, answer: string, confidence: number): Promise&lt;AttestationTransaction&gt;
+- Creates cryptographically signed attestation
+- Parameters:
+  - questionId: Must exist in curriculum.json
+  - answer: MCQ (A-E) or FRQ text (min 10 chars)  
+  - confidence: Float 1.0-5.0 (validated by Invariant 3)
+- Returns: Attestation object with hash, signature, timestamp
+- Throws: Error if parameters invalid or rate limited
+                </div>
+            </div>
+
+            <div class="api-method">
+                <h5>APStatWASM.calculateConsensus(attestations)</h5>
+                <div class="code-block">
+calculateConsensus(attestations: AttestationTransaction[]): ConsensusResult
+- Computes convergence metrics per Invariant 7
+- Applies progressive quorum rules (Invariant 2)
+- Detects outliers per Invariant 9
+- Returns: {convergence: float, quorum: boolean, outliers: string[]}
+                </div>
+            </div>
+
+            <h4>Educational Features API</h4>
+            <div class="api-method">
+                <h5>EducationalFeatures.showInvariant(id)</h5>
+                <div class="code-block">
+showInvariant(id: number): void
+- Displays modal with invariant explanation
+- Parameters: id (1-13) corresponding to invariant number
+- Shows: technical definition, plain language, examples, importance
+                </div>
+            </div>
+
+            <div class="api-method">
+                <h5>EducationalFeatures.createConvergenceChart(canvasId, data)</h5>
+                <div class="code-block">
+createConvergenceChart(canvasId: string, data: number[]): void
+- Renders convergence visualization
+- Uses HTML5 Canvas for performance
+- Data points represent convergence percentage over time
+- Automatically scales to 0-100% range
+                </div>
+            </div>
+
+            <h4>UI Bridge Functions</h4>
+            <div class="api-method">
+                <h5>navigateToView(viewName)</h5>
+                <div class="code-block">
+navigateToView(viewName: string): void  
+- Changes current view, updates UI state
+- Valid views: MainMenu, ProfileView, BlockchainView, QuestionsView, ReputationView
+- Triggers: state update, rendering, event counter increment
+- Validates: UI Safety invariant (Invariant 13)
+                </div>
+            </div>
+        </div>
+
+        <div class="guide-section">
+            <h3>💾 Data Storage Schema</h3>
+
+            <h4>IndexedDB Structure</h4>
+            <div class="code-block">
+Database: APStatBlockchain v1
+Object Stores:
+  - profiles(userId): Profile objects
+  - transactions(hash): AttestationTransaction objects  
+  - blocks(hash): Block objects
+  - reputation(userId): ReputationScore objects
+  - questions(id): Question objects from curriculum
+  - system-state(key): Global system state snapshots
+
+Indexes:
+  - transactions.timestamp: For chronological queries
+  - transactions.questionId: For per-question analysis  
+  - profiles.pubkey: For identity validation (unique)
+            </div>
+
+            <h4>localStorage Schema</h4>
+            <div class="code-block">
+Keys:
+  - 'apstat-current-state': JSON serialized SystemState
+  - 'apstat-user-preferences': UI preferences, tutorial status
+  - 'apstat-rate-limits': Rate limiting timestamps per user/question
+  - 'apstat-offline-queue': Pending operations for background sync
+  - 'tutorial-completed': Boolean flag for first-time user experience
+            </div>
+
+            <h4>Export Format</h4>
+            <div class="code-block">
+{
+  "exportVersion": "1.0.0",
+  "timestamp": "2024-01-27T10:30:00.000Z",
+  "userId": "student123",
+  "profile": { ProfileObject },
+  "attestations": [ AttestationTransaction[] ],
+  "reputationHistory": [ {timestamp, score, reason}[] ],
+  "questionAttempts": [ {questionId, attempts, lastAttempt}[] ],
+  "statistics": {
+    "totalAttestations": 42,
+    "averageConfidence": 3.7,
+    "consensusRate": 0.85,
+    "reputationTrend": "increasing"
+  }
+}
+            </div>
+        </div>
+
+        <div class="guide-section">
+            <h3>🔧 Build System and Deployment</h3>
+
+            <h4>WASM Compilation Pipeline</h4>
+            <div class="code-block">
+# Phase 1: Haskell compilation
+stack --stack-yaml=stack-wasm.yaml build
+stack exec ghc -- -O2 -c wasm-src/Blockchain.Pure.hs
+
+# Phase 2: GHCJS compilation (if available)  
+ghcjs -O2 -DGHCJS_BROWSER -dedupe -DGHCJS_REACTIVE --make wasm-src/Main.WASM.hs
+
+# Phase 3: JavaScript binding generation
+./build-wasm.sh
+
+# Output: dist-wasm/apstat-bindings.js with fallback implementations
+            </div>
+
+            <h4>Optimization Strategies</h4>
+            <ul>
+                <li><strong>Code Splitting:</strong> Load educational features lazily</li>
+                <li><strong>Asset Compression:</strong> Gzip all text assets</li>
+                <li><strong>Cache Strategy:</strong> Service Worker with cache-first for static assets</li>
+                <li><strong>Bundle Size:</strong> Tree-shake unused curriculum questions</li>
+                <li><strong>Memory Management:</strong> Periodic garbage collection in long sessions</li>
+            </ul>
+
+            <h4>Performance Benchmarks</h4>
+            <div class="code-block">
+Target Metrics:
+  - Package size: &lt; 10MB uncompressed, &lt; 3MB compressed
+  - Load time: &lt; 3 seconds on 3G connection
+  - Attestation processing: &lt; 100ms per operation
+  - Memory usage: &lt; 50MB after 100 attestations
+  - Offline availability: 100% functionality without network
+            </div>
+        </div>
+
+        <div class="guide-section">
+            <h3>🧪 Testing and Verification</h3>
+
+            <h4>Automated Test Suite</h4>
+            <div class="code-block">
+# Run all tests
+npm test
+
+# Individual test categories  
+npm run test:atoms          # Test all 58 atoms independently
+npm run test:invariants     # Verify all 13 invariants hold
+npm run test:integration    # End-to-end PoK cycle testing
+npm run test:performance    # Benchmark core operations
+npm run test:browser        # Cross-browser compatibility
+            </div>
+
+            <h4>Manual Verification Checklist</h4>
+            <ul>
+                <li><strong>Full PoK Cycle:</strong> Question → Answer → Consensus → Reputation Update</li>
+                <li><strong>Offline Mode:</strong> Disconnect network, verify full functionality</li>
+                <li><strong>Educational Features:</strong> Tutorial, invariant explanations, visualizations</li>
+                <li><strong>Error Handling:</strong> Invalid inputs, network failures, storage limits</li>
+                <li><strong>Browser Compatibility:</strong> Chrome, Firefox, Safari, Edge (latest versions)</li>
+                <li><strong>Performance:</strong> Load time, memory usage, responsiveness</li>
+                <li><strong>Persistence:</strong> Refresh page, export/import state</li>
+            </ul>
+
+            <h4>Invariant Testing Framework</h4>
+            <div class="code-block">
+// Example invariant test
+function testProgressiveQuorum() {
+    const attestations = createMockAttestations(10);
+    const convergence = calculateConvergence(attestations);
+    const requiredQuorum = progressiveQuorum(convergence);
+    
+    assert(attestations.length >= requiredQuorum, 
+           `Insufficient attestations: ${attestations.length} < ${requiredQuorum}`);
+    
+    // Test edge cases
+    assert(progressiveQuorum(0.3) === 5, "Low convergence should require 5 attestations");
+    assert(progressiveQuorum(0.9) === 3, "High convergence should require only 3 attestations");
+}
+            </div>
+        </div>
+
+        <div class="guide-section">
+            <h3>🔐 Security Considerations</h3>
+
+            <h4>Cryptographic Security</h4>
+            <ul>
+                <li><strong>Hash Function:</strong> SHA-256 via Web Crypto API</li>
+                <li><strong>Digital Signatures:</strong> ED25519 (simulated in JavaScript fallback)</li>
+                <li><strong>Seed Generation:</strong> Cryptographically secure random number generation</li>
+                <li><strong>Key Storage:</strong> Private keys never leave the browser</li>
+            </ul>
+
+            <h4>Attack Mitigations</h4>
+            <div class="code-block">
+Sybil Attacks: Prevented by identity integrity (Invariant 1)
+Spam Attacks: Rate limiting (Invariant 8) - 30 day cooldown
+Collusion: Statistical outlier detection (Invariant 9)
+Gaming: Confidence weighting penalizes overconfidence
+Replay: Timestamp validation and nonce checking
+            </div>
+
+            <h4>Privacy Protection</h4>
+            <ul>
+                <li><strong>Local-Only:</strong> No data transmitted to external servers</li>
+                <li><strong>Anonymous Attestations:</strong> No PII required for participation</li>
+                <li><strong>Pseudonymous Identities:</strong> Public keys as identifiers</li>
+                <li><strong>Data Control:</strong> Students can export/delete their own data</li>
+            </ul>
+        </div>
+
+        <div class="guide-section">
+            <h3>🚀 Extension and Customization</h3>
+
+            <h4>Adding New Questions</h4>
+            <div class="code-block">
+// Edit data/curriculum.json
+{
+  "id": "U2-L3-Q15",
+  "type": "multiple-choice", // or "free-response"
+  "prompt": "Your question text here",
+  "choices": [
+    {"key": "A", "value": "Option A"},
+    {"key": "B", "value": "Option B"}
+  ],
+  "correct": "A", // Optional - system can work without answer key
+  "rubric": {     // For FRQ only
+    "criteria": ["Point 1", "Point 2"],
+    "maxScore": 5
+  }
+}
+            </div>
+
+            <h4>Custom Invariants</h4>
+            <div class="code-block">
+// Add to educational-features.js
+const customInvariant = {
+  14: {
+    name: "Custom Rule",
+    technical: "∀ x: customCondition(x)",
+    explanation: "Your explanation here",
+    example: "Your example here",
+    importance: "Why this matters"
+  }
+};
+
+// Register in getInvariantDefinitions()
+            </div>
+
+            <h4>Theming and Branding</h4>
+            <ul>
+                <li><strong>CSS Variables:</strong> Modify assets/styles.css color definitions</li>
+                <li><strong>Logo Replacement:</strong> Update header section in index.html</li>
+                <li><strong>Custom Fonts:</strong> Add web fonts to assets/ directory</li>
+                <li><strong>School Colors:</strong> Update gradient definitions for institutional branding</li>
+            </ul>
+        </div>
+
+        <a href="../index.html" class="back-link">🏠 Return to Main System</a>
+    </div>
+</body>
+</html>

@@ -11,7 +11,10 @@
       "Bash(./SimpleTest.exe)",
       "Bash(chmod:*)",
       "Bash(./build-wasm.sh:*)",
-      "Bash(node:*)"
+      "Bash(node:*)",
+      "Bash(dir:*)",
+      "Bash(zip:*)",
+      "Bash(tar:*)"
     ],
     "deny": [],
     "ask": []
