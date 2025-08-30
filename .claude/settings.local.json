@@ -6,7 +6,11 @@
       "Bash(tree:*)",
       "Bash(./integration_test)",
       "Bash(mv:*)",
-      "Bash(git log:*)"
+      "Bash(git log:*)",
+      "Bash(ghc:*)",
+      "Bash(./SimpleTest.exe)",
+      "Bash(chmod:*)",
+      "Bash(./build-wasm.sh:*)"
     ],
     "deny": [],
     "ask": []

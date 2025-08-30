@@ -1,0 +1,33 @@
+# WASM-specific Stack configuration for apstat-fundamental-hs
+# Based on GHCJS compilation path with JS FFI
+
+resolver: lts-18.28  # Last LTS with stable GHCJS support
+
+packages:
+- .
+- wasm-src/  # WASM-specific source directory
+
+# GHCJS-specific configuration
+compiler: ghcjs-8.6.0.1  # Compatible with resolver
+compiler-check: match-exact
+
+# WASM build flags
+ghc-options:
+  "$everything": -Wall -O2
+  "$locals": -ddump-to-file -ddump-js -ddump-stg-final
+
+# Extra dependencies for WASM/JS FFI
+extra-deps:
+- ghcjs-base-0.2.0.0@sha256:8f997c6b2a373c6c6de7b49f9a87de46e7a8ccafada8c39e7823dd4fa7bb1656,5865
+- ghcjs-prim-0.1.1.0@sha256:c91b2d8c8cfec1d9b4a6b5a8b3b0dcba4ed5c6adc0f88d4ed9b17b8a6b5f2b8f,3214
+
+# Conditional compilation flags for WASM target
+flags:
+  apstat-fundamental-hs:
+    wasm: true
+    native-io: false
+
+# Build configuration
+build:
+  executable-stripping: false  # Keep symbols for debugging
+  library-stripping: false

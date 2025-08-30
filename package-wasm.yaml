@@ -1,0 +1,112 @@
+# WASM-specific package configuration for apstat-fundamental-hs
+# Separate configuration for WASM compilation with JS FFI support
+
+name:                apstat-fundamental-hs-wasm
+version:             0.1.0.0
+github:              "username/apstat-fundamental-hs"
+license:             BSD3
+author:              "Author name here"
+maintainer:          "example@example.com"
+copyright:           "2024 Author name here"
+
+extra-source-files:
+- README.md
+- CHANGELOG.md
+
+synopsis:            AP Statistics Fundamental Concepts - WASM Implementation
+category:            Education
+
+description:         WASM-compiled version of AP Statistics blockchain with JavaScript FFI integration
+
+# Conditional flags for WASM builds
+flags:
+  wasm:
+    description: Enable WASM compilation with JS FFI
+    manual: true
+    default: false
+
+# Base dependencies (reduced for WASM)
+dependencies:
+- base >= 4.7 && < 5
+- aeson >= 2.0
+- bytestring >= 0.10
+- text >= 1.2
+- containers >= 0.6
+- mtl >= 2.2
+
+# WASM-specific dependencies
+when:
+  - condition: flag(wasm)
+    dependencies:
+    - ghcjs-base         # GHCJS base libraries
+    - ghcjs-prim         # GHCJS primitives
+
+# Native-only dependencies
+when:
+  - condition: "!flag(wasm)"
+    dependencies:
+    - time >= 1.9
+    - random >= 1.2
+    - cryptonite >= 0.30
+
+ghc-options:
+- -Wall
+- -Wcompat
+- -O2
+
+# WASM-specific GHC options
+when:
+  - condition: flag(wasm)
+    ghc-options:
+    - -DGHCJS_BROWSER
+    - -dedupe
+    - -DCALLCONV=ccall
+
+library:
+  source-dirs: 
+    - src
+  when:
+    - condition: flag(wasm)
+      source-dirs: wasm-src
+
+executables:
+  # Native executable
+  apstat-fundamental-hs-exe:
+    main:                Main.hs
+    source-dirs:         app
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - apstat-fundamental-hs-wasm
+    when:
+      - condition: flag(wasm)
+        buildable: false
+
+  # WASM executable
+  apstat-fundamental-hs-wasm:
+    main:                Main.WASM.hs
+    source-dirs:         wasm-src
+    dependencies:
+    - apstat-fundamental-hs-wasm
+    when:
+      - condition: "!flag(wasm)"
+        buildable: false
+
+tests:
+  apstat-fundamental-hs-test:
+    main:                Spec.hs
+    source-dirs:         test
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - apstat-fundamental-hs-wasm
+    - hspec >= 2.7
+    - QuickCheck >= 2.14
+    when:
+      - condition: flag(wasm)
+        dependencies:
+        - temporary >= 1.3

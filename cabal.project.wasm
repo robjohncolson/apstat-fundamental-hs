@@ -1,0 +1,20 @@
+-- WASM compilation project configuration
+-- Alternative to Stack for direct Cabal builds
+
+packages: .
+          wasm-src/
+
+-- Conditional compilation for WASM target
+package apstat-fundamental-hs
+  flags: +wasm -native-io
+
+-- GHCJS-specific options
+program-locations
+  ghcjs-location: ghcjs
+  ghcjs-pkg-location: ghcjs-pkg
+
+-- Optimization flags for smaller output
+package *
+  optimization: 2
+  split-sections: True
+  executable-stripping: True
