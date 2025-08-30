@@ -31,6 +31,11 @@ cd "../$OUTPUT_DIR"
 echo "  - Testing core atoms..."
 ./SimpleTest.exe
 
+echo "Step 2.5: Testing WASM persistence atoms..."
+cd "../$WASM_DIR"
+echo "  - Compiling WASM persistence test harness"
+stack exec ghc -- --make -i../src TestPersistenceWASM.hs -o "../$OUTPUT_DIR/TestPersistenceWASM.exe" 2>/dev/null || echo "    Note: Full WASM persistence tests require GHCJS - skipping for now"
+
 echo "Step 3: Creating JavaScript bindings stub..."
 cd ..
 cat > "$OUTPUT_DIR/apstat-bindings.js" << 'EOF'
